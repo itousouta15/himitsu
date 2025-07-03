@@ -63,8 +63,8 @@ a {
 /* 手機版 canvas 往上移動 */
 @media (max-width: 600px) {
   .canvas {
-    margin-top: 0vw;
-    /* 可依需求調整數值，讓點陣動畫區域更靠近上方 */
+    margin-top: -10vw;
+    /* 已加大往上移動幅度，讓點陣動畫區域更靠近上方 */
   }
 }
 
