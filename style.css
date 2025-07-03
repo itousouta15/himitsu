@@ -1,3 +1,17 @@
+/* 手機板：讓 .life-days-line 和 .random-words-line 強制分行 */
+@media (max-width: 600px) {
+  .life-days-line {
+    display: block;
+    margin-bottom: 0.3em;
+  }
+  .random-words-line {
+    display: block;
+    margin-top: 0.3em;
+  }
+  .mobile-break {
+    display: none;
+  }
+}
 /* copyright footer 樣式 */
 .copyright-footer {
     color: #BBE1FA;
