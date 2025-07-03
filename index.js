@@ -7,7 +7,8 @@ var S = {
         document.body.classList.add('body--ready'); // 加上背景色
         // 啟動動畫流程（顯示祝福、倒數、圖形等）
         // 增加點陣愛心顯示
-        S.UI.simulate("祝你|生日快樂|#countdown 3|#letter ❤|#rectangle 15x15|#circle 12|#time");
+        // 倒數完才顯示愛心
+        S.UI.simulate("祝你|生日快樂|#countdown 3|#letter |#letter ❤|#rectangle 15x15|#circle 12|#time");
         // 持續渲染動畫
         S.Drawing.loop(function () {
             S.Shape.render();
