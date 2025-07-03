@@ -10,24 +10,66 @@
 
 <body>
     <!-- 头像 -->
-    <div class="cs">
-        <img src="https://youpai.roccoshi.top/img/20200801202340.png" id="logo">
-    </div>
+    <div class="cs"></div>
     <canvas class="canvas" width="1820" height="905"></canvas>
     <!-- 生日祝福語 -->
     <p class="text">
-        寶寶，生日快樂！<br />
+        <span id="typewriter"></span><br />
         妳來到這個世界已經 <span id="span_dt_dt"></span>
         <br />
-        <span style="font-size: 1.2em; color: #a579ae;">大好きだよ</span>
+        <span id="random-words" style="font-size: 1.2em; color: #ffffdd;"></span>
     </p>
+    <script>
+    // 自動打字效果
+    const message = "寶寶，生日快樂！";
+    let typeIdx = 0;
+    function typeWriter() {
+        if (typeIdx <= message.length) {
+            document.getElementById('typewriter').innerText = message.slice(0, typeIdx);
+            typeIdx++;
+            setTimeout(typeWriter, 120);
+        }
+    }
+    window.addEventListener('DOMContentLoaded', typeWriter);
+
+    // 隨機小語
+    const words = [
+        "今天也要開心喔！",
+        "我會一直陪著妳。",
+        "大好きだよ ❤",
+        "有妳真好。",
+        "想你了！",
+        "你是我最珍貴的寶寶。"
+    ];
+    function showRandomWord() {
+        const el = document.getElementById('random-words');
+        el.innerText = words[Math.floor(Math.random() * words.length)];
+    }
+    setInterval(showRandomWord, 4000);
+    window.addEventListener('DOMContentLoaded', showRandomWord);
+    </script>
     <!--  设定出生日期 -->
     <script type="text/javascript" src="time.js"></script>
     <!-- canvas动画 -->
     <script type="text/javascript" src="index.js"></script>
+    <script>
+    // 點陣動畫訊息輪播
+    window.addEventListener('DOMContentLoaded', function() {
+        if (window.S && S.UI && typeof S.UI.simulate === 'function') {
+            const messages = [
+                "祝你", "生日快樂喵", "❤", "LOVE", "生日快樂", "我愛妳", "大好きだよ", "永遠愛妳", "Happy Birthday"
+            ];
+            let idx = 0;
+            setInterval(function() {
+                S.UI.simulate(`#letter ${messages[idx]}`);
+                idx = (idx + 1) % messages.length;
+            }, 6000);
+        }
+    });
+    </script>
     <!-- copyright -->
     <footer class="copyright-footer">
-        ©2025 Soutaだよ
+        ©2025 itou Soutaだよ
     </footer>
 </body>
 </html>

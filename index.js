@@ -404,9 +404,10 @@ S.Shape = (function () {
     }
     return {
         shuffleIdle: function () {
+            // 閒置時慢慢亂跳
             var a = S.Drawing.getArea();
             for (var d = 0; d < dots.length; d++) {
-                if (!dots[d].s) {
+                if (!dots[d].s && Math.random() < 0.01) { // 機率大幅降低
                     dots[d].move({
                         x: Math.random() * a.w,
                         y: Math.random() * a.h
