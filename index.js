@@ -124,15 +124,16 @@ var S = {
                     case 'countdown':
                     value = parseInt(value) || 10;
                     value = value > 0 ? value : 10;
+                    // 修正倒數顯示 3,2,1 並在 0 時才繼續
                     timedAction(function (index) {
-                        if (index === 0) {
+                        if (index > 0) {
+                            S.Shape.switchShape(S.ShapeBuilder.letter(index), true);
+                        } else {
                             if (sequence.length === 0) {
                                 S.Shape.switchShape(S.ShapeBuilder.letter(''));
                             } else {
                                 performAction(sequence);
                             }
-                        } else {
-                            S.Shape.switchShape(S.ShapeBuilder.letter(index), true);
                         }
                     }, 1000, value, true);
                     break;
