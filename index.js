@@ -375,8 +375,8 @@ var S = {
             letter: function (l) {
                 var s = 0;
                 setFontSize(fontSize);
-                // 支援多行（\n）自動換行
-                var lines = (typeof l === 'string') ? l.split(/\\n|\n/) : [l];
+                // 支援多行（\n 或 \\n 或 \r\n）自動換行
+                var lines = (typeof l === 'string') ? l.replace(/\\n/g, '\n').split(/\n|\r\n/) : [l];
                 // 動態調整字型大小，讓多行也能置中
                 var maxLineWidth = 0;
                 for (var i = 0; i < lines.length; i++) {
