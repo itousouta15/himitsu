@@ -17,8 +17,10 @@
     font-size: 12px;
     margin-top: 20px;
 }
-html {
+
+html, body {
    height: 100%;
+   overflow: hidden;
 }
 
 body {
