@@ -38,8 +38,8 @@
         "我會一直陪著妳。",
         "大好きだよ ❤",
         "有妳真好。",
-        "想你了！",
-        "你是我最珍貴的寶寶。"
+        "想你了~",
+        "你是我最珍貴的寶物。"
     ];
     function showRandomWord() {
         const el = document.getElementById('random-words');
@@ -57,13 +57,13 @@
     window.addEventListener('DOMContentLoaded', function() {
         if (window.S && S.UI && typeof S.UI.simulate === 'function') {
             const messages = [
-                "祝你", "生日快樂喵", "❤", "LOVE", "生日快樂", "我愛妳", "大好きだよ", "永遠愛妳", "Happy Birthday"
+                "祝你", "生日快樂喵", "❤", "LOVE", "我愛妳", "大好きだよ", "(♡˙︶˙♡)"
             ];
             let idx = 0;
             setInterval(function() {
                 S.UI.simulate(`#letter ${messages[idx]}`);
                 idx = (idx + 1) % messages.length;
-            }, 6000);
+            }, 5000);
         }
     });
     </script>

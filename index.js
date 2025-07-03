@@ -404,13 +404,20 @@ S.Shape = (function () {
     }
     return {
         shuffleIdle: function () {
-            // 閒置時慢慢亂跳
+            // 讓閒置點只做微小抖動，且機率調回 10%
             var a = S.Drawing.getArea();
             for (var d = 0; d < dots.length; d++) {
-                if (!dots[d].s && Math.random() < 0.01) { // 機率大幅降低
+                if (!dots[d].s && Math.random() < 0.1) { // 機率調回 10%
+                    // 只在原地附近小幅度亂動
+                    var jitter = 8; // 抖動幅度 px
+                    var nx = dots[d].p.x + (Math.random() - 0.5) * jitter;
+                    var ny = dots[d].p.y + (Math.random() - 0.5) * jitter;
+                    // 限制不超出畫布
+                    nx = Math.max(0, Math.min(a.w, nx));
+                    ny = Math.max(0, Math.min(a.h, ny));
                     dots[d].move({
-                        x: Math.random() * a.w,
-                        y: Math.random() * a.h
+                        x: nx,
+                        y: ny
                     });
                 }
             }
