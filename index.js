@@ -1,31 +1,4 @@
-// 愛心動畫：產生一顆飄動的愛心
-function createHeart() {
-    // 建立一個 div 作為愛心
-    const heart = document.createElement('div');
-    heart.className = 'heart';
-    heart.innerText = '❤'; // 使用字元愛心
-    // 隨機設定愛心的水平與垂直位置
-    heart.style.left = Math.random() * 100 + 'vw';
-    heart.style.top = (80 + Math.random() * 40) + 'vh';
-    // 隨機縮放愛心大小
-    heart.style.transform = `scale(${0.8 + Math.random() * 0.7})`;
-    // 加入到 .hearts 容器
-    document.querySelector('.hearts').appendChild(heart);
-    // 3 秒後自動移除愛心
-    setTimeout(() => {
-        heart.remove();
-    }, 3000);
-}
-
-// 頁面載入後建立愛心容器並定時產生愛心
-window.addEventListener('DOMContentLoaded', () => {
-    // 建立愛心容器
-    const heartsContainer = document.createElement('div');
-    heartsContainer.className = 'hearts';
-    document.body.appendChild(heartsContainer);
-    // 每 0.5 秒產生一顆愛心
-    setInterval(createHeart, 500);
-});
+// (已移除飄動的字元愛心動畫)
 // S 物件：主動畫控制
 var S = {
     // 初始化函式
@@ -179,7 +152,12 @@ var S = {
                     }
                     break;
                     default:
-                    S.Shape.switchShape(S.ShapeBuilder.letter(current[0] === cmd ? 'HacPai' : current));
+                    // 修正：如果 current 是 #letter 指令，直接顯示內容（如 ❤）
+                    if (action === 'letter') {
+                        S.Shape.switchShape(S.ShapeBuilder.letter(value));
+                    } else {
+                        S.Shape.switchShape(S.ShapeBuilder.letter(current[0] === cmd ? '' : current));
+                    }
                 }
             }, 2000, sequence.length);
         }
