@@ -62,13 +62,12 @@
                 const isMobile = window.innerWidth <= 600;
                 return [
                     "祝你",
-                    isMobile ? "生日\\n快樂" : "生日快樂",
+                    isMobile ? "生日\n快樂" : "生日快樂",
                     "❤",
                     "LOVE",
                     "我愛妳",
-                    "大好き",
-                    "(♡˙︶˙♡)"
-                ];
+                    "大好き"
+                ].concat(isMobile ? [] : ["(♡˙︶˙♡)"]);
             }
             let messages = getMessages();
             let idx = 0;
