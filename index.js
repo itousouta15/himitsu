@@ -388,9 +388,11 @@ var S = {
                     (shapeCanvas.height / fontSize) * (isNumber(l) ? 1 : 0.45) * fontSize / lines.length);
                 setFontSize(s);
                 shapeContext.clearRect(0, 0, shapeCanvas.width, shapeCanvas.height);
-                var baseY = shapeCanvas.height / 2 - ((lines.length - 1) * s * 0.6) / 2;
+                // 行距加大（原本 0.9，改為 1.2）
+                var lineHeight = 1.2;
+                var baseY = shapeCanvas.height / 2 - ((lines.length - 1) * s * lineHeight) / 2;
                 for (var i = 0; i < lines.length; i++) {
-                    shapeContext.fillText(lines[i], shapeCanvas.width / 2, baseY + i * s * 0.9);
+                    shapeContext.fillText(lines[i], shapeCanvas.width / 2, baseY + i * s * lineHeight);
                 }
                 return processCanvas();
             },

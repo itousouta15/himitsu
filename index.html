@@ -57,11 +57,27 @@
     // 點陣動畫訊息輪播
     window.addEventListener('DOMContentLoaded', function() {
         if (window.S && S.UI && typeof S.UI.simulate === 'function') {
-            const messages = [
-                "祝你", "生日快樂", "❤", "LOVE", "我愛妳", "大好き", "(♡˙︶˙♡)"
-            ];
+            // 根據螢幕寬度決定生日快樂是否換行
+            function getMessages() {
+                const isMobile = window.innerWidth <= 600;
+                return [
+                    "祝你",
+                    isMobile ? "生日\\n快樂" : "生日快樂",
+                    "❤",
+                    "LOVE",
+                    "我愛妳",
+                    "大好き",
+                    "(♡˙︶˙♡)"
+                ];
+            }
+            let messages = getMessages();
             let idx = 0;
             setInterval(function() {
+                // 若螢幕尺寸變化，重新取得 messages
+                const newMessages = getMessages();
+                if (messages[1] !== newMessages[1]) {
+                    messages = newMessages;
+                }
                 S.UI.simulate(`#letter ${messages[idx]}`);
                 idx = (idx + 1) % messages.length;
             }, 5000);

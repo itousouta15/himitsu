@@ -53,9 +53,19 @@ a {
    width: 100%;
 }
 
+
+/* 桌機預設 canvas 位置 */
 .canvas {
    margin: 0 auto;
    display: block;
+}
+
+/* 手機版 canvas 往上移動 */
+@media (max-width: 600px) {
+  .canvas {
+    margin-top: 10vw;
+    /* 可依需求調整數值，讓點陣動畫區域更靠近上方 */
+  }
 }
 
 img#logo {
