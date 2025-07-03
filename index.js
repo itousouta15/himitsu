@@ -45,10 +45,18 @@ var S = {
                 renderFn();
                 requestFrame.call(window, this.loop.bind(this));
             },
-            // 調整畫布大小
+            // 調整畫布大小（手機優化）
             adjustCanvas: function () {
-                canvas.width = window.innerWidth - 100;
-                canvas.height = window.innerHeight - 30;
+                var isMobile = window.innerWidth <= 600;
+                if (isMobile) {
+                    // 手機：預留較小邊距，畫布盡量大
+                    canvas.width = window.innerWidth - 20;
+                    canvas.height = window.innerHeight - 20;
+                } else {
+                    // 桌機：維持原本邊距
+                    canvas.width = window.innerWidth - 100;
+                    canvas.height = window.innerHeight - 30;
+                }
             },
             // 清空畫布
             clearFrame: function () {
@@ -279,7 +287,8 @@ var S = {
         }
     };
     S.ShapeBuilder = (function () {
-        var gap = 13,
+        // gap: 點陣間距，手機縮小
+        var gap = (window.innerWidth <= 600) ? 8 : 13,
         shapeCanvas = document.createElement('canvas'),
         shapeContext = shapeCanvas.getContext('2d'),
         fontSize = 500,
