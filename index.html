@@ -3,7 +3,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>鴨鴨生日快樂!!!</title>
+    <title>生日快樂</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
@@ -15,9 +15,9 @@
     <!-- 生日祝福語 -->
     <p class="text">
         <span id="typewriter"></span><br />
-        <span class="life-days-line"></span>妳來到這個世界已經 <span id="span_dt_dt"></span></span>
-        <br class="mobile-break" />
-        <span class="random-words-line"><span id="random-words" style="font-size: 1.2em; color: #ffffdd;"></span></span>
+        <span class="life-time-label">妳來到這個世界已經</span> <span id="span_dt_dt"></span>
+        <br />
+        <span id="random-words" style="font-size: 1.2em; color: #ffffdd;"></span>
     </p>
     <script>
     // 自動打字效果
@@ -34,8 +34,7 @@
 
     // 隨機小語
     const words = [
-        "子紜生日快樂w",
-        "今天也要開心喔w",
+        "今天也要開心喔！",
         "我會一直陪著妳。",
         "大好きだよ ❤",
         "有妳真好。",
@@ -58,7 +57,7 @@
     window.addEventListener('DOMContentLoaded', function() {
         if (window.S && S.UI && typeof S.UI.simulate === 'function') {
             const messages = [
-                "祝你", "生日快樂","喵", "❤", "LOVE", "我愛妳", "大好き", "(♡˙︶˙♡)"
+                "祝你", "生日快樂喵", "❤", "LOVE", "我愛妳", "大好きだよ", "(♡˙︶˙♡)"
             ];
             let idx = 0;
             setInterval(function() {
@@ -70,7 +69,7 @@
     </script>
     <!-- copyright -->
     <footer class="copyright-footer">
-        ©2025 伊藤蒼太 itou souta
+        ©2025 itou Soutaだよ
     </footer>
 </body>
 </html>

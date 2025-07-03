@@ -1,15 +1,13 @@
-/* 手機板：讓 .life-days-line 和 .random-words-line 強制分行 */
+/* 讓「妳來到這個世界已經」在手機自動換行 */
 @media (max-width: 600px) {
-  .life-days-line {
+  .life-time-label, #span_dt_dt {
     display: block;
-    margin-bottom: 0.3em;
+    text-align: center;
+    line-height: 1.6;
   }
-  .random-words-line {
-    display: block;
-    margin-top: 0.3em;
-  }
-  .mobile-break {
-    display: none;
+  #span_dt_dt {
+    font-size: 1.1em;
+    margin-top: 2px;
   }
 }
 /* copyright footer 樣式 */
