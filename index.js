@@ -9,10 +9,18 @@ var S = {
         // 增加點陣愛心顯示
         // 直接顯示愛心，不做倒數動畫
         // 手機版點陣圖顯示「生日」\n「快樂」分行，桌機維持原本
+        function getTimeStr() {
+            var d = new Date();
+            var h = d.getHours();
+            var m = d.getMinutes();
+            m = m < 10 ? '0' + m : m;
+            return h + ':' + m;
+        }
+        var timeStr = getTimeStr();
         if (window.innerWidth <= 600) {
-            S.UI.simulate("祝你|#letter 生日\\n快樂|#letter ❤|#rectangle 15x15|#circle 12|#time");
+            S.UI.simulate(timeStr + "|祝你|#letter 生日\\n快樂|#letter ❤|#rectangle 15x15|#circle 12|#time");
         } else {
-            S.UI.simulate("祝你|生日快樂|#letter ❤|#rectangle 15x15|#circle 12|#time");
+            S.UI.simulate(timeStr + "|祝你|生日快樂|#letter ❤|#rectangle 15x15|#circle 12|#time");
         }
         // 持續渲染動畫
         S.Drawing.loop(function () {
