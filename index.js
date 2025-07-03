@@ -7,8 +7,8 @@ var S = {
         document.body.classList.add('body--ready'); // 加上背景色
         // 啟動動畫流程（顯示祝福、倒數、圖形等）
         // 增加點陣愛心顯示
-        // 倒數完才顯示愛心
-        S.UI.simulate("祝你|生日快樂|#countdown 3|#letter |#letter ❤|#rectangle 15x15|#circle 12|#time");
+        // 直接顯示愛心，不做倒數動畫
+        S.UI.simulate("祝你|生日快樂|#letter ❤|#rectangle 15x15|#circle 12|#time");
         // 持續渲染動畫
         S.Drawing.loop(function () {
             S.Shape.render();
@@ -121,22 +121,14 @@ var S = {
                 action = getAction(current);
                 value = getValue(current);
                 switch (action) {
+                    // 移除 countdown 指令，遇到時直接跳過
                     case 'countdown':
-                    value = parseInt(value) || 10;
-                    value = value > 0 ? value : 10;
-                    // 修正倒數顯示 3,2,1 並在 0 時才繼續
-                    timedAction(function (index) {
-                        if (index > 0) {
-                            S.Shape.switchShape(S.ShapeBuilder.letter(index), true);
+                        if (sequence.length === 0) {
+                            S.Shape.switchShape(S.ShapeBuilder.letter(''));
                         } else {
-                            if (sequence.length === 0) {
-                                S.Shape.switchShape(S.ShapeBuilder.letter(''));
-                            } else {
-                                performAction(sequence);
-                            }
+                            performAction(sequence);
                         }
-                    }, 1000, value, true);
-                    break;
+                        break;
                     case 'rectangle':
                     value = value && value.split('x');
                     value = (value && value.length === 2) ? value : [maxShapeSize, maxShapeSize / 2];
