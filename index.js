@@ -287,8 +287,8 @@ var S = {
         }
     };
     S.ShapeBuilder = (function () {
-        // gap: 點陣間距，手機縮小（更小）
-        var gap = (window.innerWidth <= 600) ? 5 : 13,
+        // gap: 點陣間距，手機適中（避免糊成一團）
+        var gap = (window.innerWidth <= 600) ? 9 : 13,
         shapeCanvas = document.createElement('canvas'),
         shapeContext = shapeCanvas.getContext('2d'),
         fontSize = 500,
