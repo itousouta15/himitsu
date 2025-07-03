@@ -1,70 +1,91 @@
-// 愛心動畫
+// 愛心動畫：產生一顆飄動的愛心
 function createHeart() {
+    // 建立一個 div 作為愛心
     const heart = document.createElement('div');
     heart.className = 'heart';
+    heart.innerText = '❤'; // 使用字元愛心
+    // 隨機設定愛心的水平與垂直位置
     heart.style.left = Math.random() * 100 + 'vw';
     heart.style.top = (80 + Math.random() * 40) + 'vh';
+    // 隨機縮放愛心大小
     heart.style.transform = `scale(${0.8 + Math.random() * 0.7})`;
+    // 加入到 .hearts 容器
     document.querySelector('.hearts').appendChild(heart);
+    // 3 秒後自動移除愛心
     setTimeout(() => {
         heart.remove();
     }, 3000);
 }
 
+// 頁面載入後建立愛心容器並定時產生愛心
 window.addEventListener('DOMContentLoaded', () => {
+    // 建立愛心容器
     const heartsContainer = document.createElement('div');
     heartsContainer.className = 'hearts';
     document.body.appendChild(heartsContainer);
+    // 每 0.5 秒產生一顆愛心
     setInterval(createHeart, 500);
 });
+// S 物件：主動畫控制
 var S = {
+    // 初始化函式
     init: function () {
-        S.Drawing.init('.canvas');
-        document.body.classList.add('body--ready');
-            //想说什么
-            S.UI.simulate("祝你|生日快樂喵|#countdown 3|#rectangle 15x15|#circle 12 |#time");
-            S.Drawing.loop(function () {
-                S.Shape.render();
-            });
-        }
-    };
+        S.Drawing.init('.canvas'); // 初始化畫布
+        document.body.classList.add('body--ready'); // 加上背景色
+        // 啟動動畫流程（顯示祝福、倒數、圖形等）
+        // 增加點陣愛心顯示
+        S.UI.simulate("祝你|生日快樂喵|#countdown 3|#letter ❤|#rectangle 15x15|#circle 12|#time");
+        // 持續渲染動畫
+        S.Drawing.loop(function () {
+            S.Shape.render();
+        });
+    }
+};
+    // S.Drawing：畫布與動畫渲染相關
     S.Drawing = (function () {
-        var canvas,
-        context,
-        renderFn,
-        requestFrame = window.requestAnimationFrame ||
-        window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.oRequestAnimationFrame ||
-        window.msRequestAnimationFrame ||
-        function (callback) {
-            window.setTimeout(callback, 2000 / 60);
-        };
+        var canvas, // 畫布元素
+            context, // 畫布 2D context
+            renderFn, // 畫面渲染函式
+            // 取得 requestAnimationFrame，不支援時用 setTimeout
+            requestFrame = window.requestAnimationFrame ||
+                window.webkitRequestAnimationFrame ||
+                window.mozRequestAnimationFrame ||
+                window.oRequestAnimationFrame ||
+                window.msRequestAnimationFrame ||
+                function (callback) {
+                    window.setTimeout(callback, 2000 / 60);
+                };
         return {
+            // 初始化畫布
             init: function (el) {
                 canvas = document.querySelector(el);
                 context = canvas.getContext('2d');
-                this.adjustCanvas();
+                this.adjustCanvas(); // 設定畫布大小
                 window.addEventListener('resize', function (e) {
                     S.Drawing.adjustCanvas();
                 });
             },
+            // 動畫主循環
             loop: function (fn) {
                 renderFn = !renderFn ? fn : renderFn;
                 this.clearFrame();
                 renderFn();
                 requestFrame.call(window, this.loop.bind(this));
             },
+            // 調整畫布大小
             adjustCanvas: function () {
                 canvas.width = window.innerWidth - 100;
                 canvas.height = window.innerHeight - 30;
             },
+            // 清空畫布
             clearFrame: function () {
                 context.clearRect(0, 0, canvas.width, canvas.height);
             },
+            // 取得畫布區域大小
             getArea: function () {
                 return {w: canvas.width, h: canvas.height};
             },
+            // 畫圓形（用於粒子）
             drawCircle: function (p, c) {
                 context.fillStyle = c.render();
                 context.beginPath();
@@ -285,6 +306,7 @@ var S = {
         shapeContext = shapeCanvas.getContext('2d'),
         fontSize = 500,
         fontFamily = 'Avenir, Helvetica Neue, Helvetica, Arial, sans-serif';
+        // fit：調整 shapeCanvas 大小與基本屬性
         function fit() {
             shapeCanvas.width = Math.floor(window.innerWidth / gap) * gap;
             shapeCanvas.height = Math.floor(window.innerHeight / gap) * gap;
@@ -292,9 +314,10 @@ var S = {
             shapeContext.textBaseline = 'middle';
             shapeContext.textAlign = 'center';
         }
+        // processCanvas：將 shapeCanvas 上的像素轉為點陣陣列
         function processCanvas() {
             var pixels = shapeContext.getImageData(0, 0, shapeCanvas.width, shapeCanvas.height).data;
-            dots = [],
+            dots = [], // 儲存所有點
             pixels,
             x = 0,
             y = 0,
@@ -303,6 +326,7 @@ var S = {
             w = 0,
             h = 0;
             for (var p = 0; p < pixels.length; p += (4 * gap)) {
+                // 只取有顏色的像素
                 if (pixels[p + 3] > 0) {
                     dots.push(new S.Point({
                         x: x,
@@ -322,22 +346,26 @@ var S = {
             }
             return {dots: dots, w: w + fx, h: h + fy};
         }
+        // setFontSize：設定字型大小
         function setFontSize(s) {
             shapeContext.font = 'bold ' + s + 'px ' + fontFamily;
         }
+        // isNumber：判斷是否為數字
         function isNumber(n) {
             return !isNaN(parseFloat(n)) && isFinite(n);
         }
+        // init：初始化 shapeCanvas
         function init() {
             fit();
             window.addEventListener('resize', fit);
         }
-        // Init
+        // 立即初始化
         init();
         return {
+            // imageFile：載入圖片並轉為點陣
             imageFile: function (url, callback) {
                 var image = new Image(),
-                a = S.Drawing.getArea();
+                    a = S.Drawing.getArea();
                 image.onload = function () {
                     shapeContext.clearRect(0, 0, shapeCanvas.width, shapeCanvas.height);
                     shapeContext.drawImage(this, 0, 0, a.h * 0.6, a.h * 0.6);
@@ -348,6 +376,7 @@ var S = {
                 };
                 image.src = url;
             },
+            // circle：產生圓形點陣
             circle: function (d) {
                 var r = Math.max(0, d) / 2;
                 shapeContext.clearRect(0, 0, shapeCanvas.width, shapeCanvas.height);

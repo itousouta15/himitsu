@@ -94,14 +94,20 @@ img#logo {
   pointer-events: none;
   z-index: 999;
 }
+
 .heart {
   position: absolute;
   width: 32px;
   height: 32px;
-  background: url('data:image/svg+xml;utf8,<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 29S2 20 2 11.5C2 6.25329 6.25329 2 11.5 2C14.0424 2 16.4176 3.23705 18 5.07031C19.5824 3.23705 21.9576 2 24.5 2C29.7467 2 34 6.25329 34 11.5C34 20 16 29 16 29Z" fill="%23ff69b4" stroke="%23fff" stroke-width="2"/></svg>');
-  background-size: contain;
-  opacity: 0.8;
+  font-size: 2em;
+  color: #ff69b4;
+  text-shadow: 0 0 8px #fff, 0 0 16px #ffb6c1;
+  opacity: 0.85;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   animation: floatHeart 3s linear forwards;
+  pointer-events: none;
 }
 
 @keyframes floatHeart {
