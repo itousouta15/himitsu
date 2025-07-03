@@ -1,18 +1,20 @@
 function BirthDay() {
-    window.setTimeout("BirthDay()", 1000);
-        BirthDay = new Date("08/01/2000 00:00:00"); // 修改出生日期
-        today = new Date();
-        timeold = (today.getTime() - BirthDay.getTime());
-        sectimeold = timeold / 1000
-        secondsold = Math.floor(sectimeold);
-        msPerDay = 24 * 60 * 60 * 1000
-        e_daysold = timeold / msPerDay
-        daysold = Math.floor(e_daysold);
-        e_hrsold = (e_daysold - daysold) * 24;
-        hrsold = Math.floor(e_hrsold);
-        e_minsold = (e_hrsold - hrsold) * 60;
-        minsold = Math.floor((e_hrsold - hrsold) * 60);
-        seconds = Math.floor((e_minsold - minsold) * 60);
-        span_dt_dt.innerHTML = daysold + "天" + hrsold + "小时" + minsold + "分" + seconds + "秒";
-    }
-    BirthDay();
+    setTimeout(BirthDay, 1000);
+    var birthDate = new Date("07/12/2008 00:00:00"); // 修改出生日期
+    var today = new Date();
+    var timeold = today.getTime() - birthDate.getTime();
+    var msPerDay = 24 * 60 * 60 * 1000;
+    var e_daysold = timeold / msPerDay;
+    var daysold = Math.floor(e_daysold);
+    var e_hrsold = (e_daysold - daysold) * 24;
+    var hrsold = Math.floor(e_hrsold);
+    var e_minsold = (e_hrsold - hrsold) * 60;
+    var minsold = Math.floor(e_minsold);
+    var seconds = Math.floor((e_minsold - minsold) * 60);
+    document.getElementById('span_dt_dt').innerHTML =
+        '<span style="color:#ff69b4;">' + daysold + '</span> 天 '
+        + '<span style="color:#ffb6c1;">' + hrsold + '</span> 小時 '
+        + '<span style="color:#ffb6c1;">' + minsold + '</span> 分 '
+        + '<span style="color:#ffb6c1;">' + seconds + '</span> 秒';
+}
+BirthDay();

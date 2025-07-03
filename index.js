@@ -1,9 +1,28 @@
+// 愛心動畫
+function createHeart() {
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.style.left = Math.random() * 100 + 'vw';
+    heart.style.top = (80 + Math.random() * 40) + 'vh';
+    heart.style.transform = `scale(${0.8 + Math.random() * 0.7})`;
+    document.querySelector('.hearts').appendChild(heart);
+    setTimeout(() => {
+        heart.remove();
+    }, 3000);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const heartsContainer = document.createElement('div');
+    heartsContainer.className = 'hearts';
+    document.body.appendChild(heartsContainer);
+    setInterval(createHeart, 500);
+});
 var S = {
     init: function () {
         S.Drawing.init('.canvas');
         document.body.classList.add('body--ready');
             //想说什么
-            S.UI.simulate("祝你|生日快乐哟|#countdown 3|#rectangle 15x15|#circle 12 |#time");
+            S.UI.simulate("祝你|生日快樂喵|#countdown 3|#rectangle 15x15|#circle 12 |#time");
             S.Drawing.loop(function () {
                 S.Shape.render();
             });
