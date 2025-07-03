@@ -375,12 +375,23 @@ var S = {
             letter: function (l) {
                 var s = 0;
                 setFontSize(fontSize);
+                // 支援多行（\n）自動換行
+                var lines = (typeof l === 'string') ? l.split(/\\n|\n/) : [l];
+                // 動態調整字型大小，讓多行也能置中
+                var maxLineWidth = 0;
+                for (var i = 0; i < lines.length; i++) {
+                    var w = shapeContext.measureText(lines[i]).width;
+                    if (w > maxLineWidth) maxLineWidth = w;
+                }
                 s = Math.min(fontSize,
-                    (shapeCanvas.width / shapeContext.measureText(l).width) * 0.8 * fontSize,
-                    (shapeCanvas.height / fontSize) * (isNumber(l) ? 1 : 0.45) * fontSize);
+                    (shapeCanvas.width / maxLineWidth) * 0.8 * fontSize,
+                    (shapeCanvas.height / fontSize) * (isNumber(l) ? 1 : 0.45) * fontSize / lines.length);
                 setFontSize(s);
                 shapeContext.clearRect(0, 0, shapeCanvas.width, shapeCanvas.height);
-                shapeContext.fillText(l, shapeCanvas.width / 2, shapeCanvas.height / 2);
+                var baseY = shapeCanvas.height / 2 - ((lines.length - 1) * s * 0.6) / 2;
+                for (var i = 0; i < lines.length; i++) {
+                    shapeContext.fillText(lines[i], shapeCanvas.width / 2, baseY + i * s * 0.9);
+                }
                 return processCanvas();
             },
             rectangle: function (w, h) {
