@@ -8,7 +8,12 @@ var S = {
         // 啟動動畫流程（顯示祝福、倒數、圖形等）
         // 增加點陣愛心顯示
         // 直接顯示愛心，不做倒數動畫
-        S.UI.simulate("祝你|生日快樂|#letter ❤|#rectangle 15x15|#circle 12|#time");
+        // 手機版點陣圖顯示「生日」\n「快樂」分行，桌機維持原本
+        if (window.innerWidth <= 600) {
+            S.UI.simulate("祝你|#letter 生日\\n快樂|#letter ❤|#rectangle 15x15|#circle 12|#time");
+        } else {
+            S.UI.simulate("祝你|生日快樂|#letter ❤|#rectangle 15x15|#circle 12|#time");
+        }
         // 持續渲染動畫
         S.Drawing.loop(function () {
             S.Shape.render();
