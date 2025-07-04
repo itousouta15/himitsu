@@ -268,125 +268,84 @@
           easterArea.style.display = 'flex';
           giftIcon.style.display = 'block';
           easterLabel.style.display = 'none';
-          // 禮物 icon 彈跳動畫與粒子特效
+          // 禮物 icon 在整個畫面上跳動
           giftIcon.innerHTML = '🎁';
           giftIcon.style.position = 'fixed';
-          giftIcon.style.zIndex = '3000';
-          giftIcon.style.pointerEvents = 'all';
-          giftIcon.style.background = 'rgba(255,255,255,0.01)'; // 增加點擊區域
-          giftIcon.style.width = iconSize + 'px';
-          giftIcon.style.height = iconSize + 'px';
-          giftIcon.style.display = 'flex';
-          giftIcon.style.alignItems = 'center';
-          giftIcon.style.justifyContent = 'center';
-          giftIcon.style.borderRadius = '50%';
-          giftIcon.style.transition = 'box-shadow 0.2s, filter 0.2s';
-          let iconSize = 48;
-          let vx = 4 + Math.random()*2, vy = -7 - Math.random()*3; // 初始速度
-          let x = Math.random() * (window.innerWidth - iconSize);
-          let y = Math.random() * (window.innerHeight/2);
-          let gravity = 0.45;
-          let bounce = 0.7;
-          let rafId = null;
-          let particles = [];
-          function renderParticles() {
-            // 移除舊的
-            particles = particles.filter(p => p.life > 0);
-            particles.forEach(p => {
-              p.x += p.vx;
-              p.y += p.vy;
-              p.vy += 0.08;
-              p.life--;
-              p.el.style.left = p.x + 'px';
-              p.el.style.top = p.y + 'px';
-              p.el.style.opacity = p.life/20;
-              if (p.life <= 0) p.el.remove();
-            });
-          }
-          function createParticle(x, y, type) {
-            const el = document.createElement('div');
-            el.style.position = 'fixed';
-            el.style.left = x + 'px';
-            el.style.top = y + 'px';
-            el.style.pointerEvents = 'none';
-            el.style.zIndex = '2100';
-            el.style.fontSize = (type==='star'? '1.2em':'1.1em');
-            el.style.transition = 'opacity 0.2s';
-            el.textContent = type==='star' ? (Math.random()>0.5?'✨':'⭐') : (Math.random()>0.5?'🎉':'🎊');
-            document.body.appendChild(el);
-            particles.push({el, x, y, vx: (Math.random()-0.5)*3, vy: -1.5-Math.random()*2, life: 20});
-          }
-          function bounceLoop() {
-            x += vx;
-            y += vy;
-            vy += gravity;
-            // 邊界反彈
-            if (x < 0) { x = 0; vx = -vx * bounce; }
-            if (x > window.innerWidth - iconSize) { x = window.innerWidth - iconSize; vx = -vx * bounce; }
-            if (y < 0) { y = 0; vy = -vy * bounce; }
-            if (y > window.innerHeight - iconSize - 40) { y = window.innerHeight - iconSize - 40; vy = -vy * bounce; vy *= 0.92; }
-            // 彈跳時產生粒子
-            if (Math.abs(vy) > 6 && y > window.innerHeight - iconSize - 50) {
-              for(let i=0;i<2;i++) createParticle(x+iconSize/2, y+iconSize/2, 'star');
+          giftIcon.style.zIndex = '2000';
+          giftIcon.style.pointerEvents = 'auto';
+          // 粒子動畫生成
+          function spawnParticles(x, y) {
+            const colors = ['#fffbe7','#ffe0f0','#ffd700','#ffb6c1','#b2e5ff','#f7a8b8','#fff'];
+            for (let i = 0; i < 8; i++) {
+              const star = document.createElement('div');
+              const size = 10 + Math.random()*8;
+              star.style.position = 'fixed';
+              star.style.left = (x + 24) + 'px';
+              star.style.top = (y + 24) + 'px';
+              star.style.width = size + 'px';
+              star.style.height = size + 'px';
+              star.style.pointerEvents = 'none';
+              star.style.zIndex = 3000;
+              star.style.opacity = 1;
+              star.style.borderRadius = '50%';
+              star.style.background = colors[Math.floor(Math.random()*colors.length)];
+              star.style.boxShadow = '0 0 8px #fff, 0 0 2px #fff';
+              star.style.transform = `scale(${0.7 + Math.random()*0.7})`;
+              // 星星/彩帶隨機旋轉
+              star.style.rotate = Math.random()*360 + 'deg';
+              // 動畫
+              const dx = (Math.random()-0.5)*120;
+              const dy = (Math.random()-0.5)*100-30;
+              star.animate([
+                { opacity: 1, transform: star.style.transform + ' translate(0,0)' },
+                { opacity: 0, transform: star.style.transform + ` translate(${dx}px,${dy}px)` }
+              ], {
+                duration: 900 + Math.random()*400,
+                easing: 'cubic-bezier(.6,-0.3,.5,1.5)'
+              });
+              setTimeout(()=>{ star.remove(); }, 1100);
+              document.body.appendChild(star);
             }
+          }
+          // 禮物 icon 彈跳移動
+          function jumpGift() {
+            // 取得視窗可用範圍（避免超出）
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            const iconSize = 48;
+            const x = Math.random() * (vw - iconSize);
+            const y = Math.random() * (vh - iconSize - 40) + 20;
+            // 彈跳動畫
+            giftIcon.style.transition = 'left 0.7s cubic-bezier(.6,-0.3,.5,1.5), top 0.7s cubic-bezier(.6,-0.3,.5,1.5), transform 0.3s';
             giftIcon.style.left = x + 'px';
             giftIcon.style.top = y + 'px';
-            renderParticles();
-            rafId = requestAnimationFrame(bounceLoop);
+            giftIcon.style.transform = 'scale(1.2)';
+            setTimeout(()=>{giftIcon.style.transform = 'none';}, 300);
+            spawnParticles(x, y);
           }
-          // hover 動畫
-          giftIcon.onmouseenter = function() {
-            vy = -16 - Math.random()*4;
-            vx = (Math.random()-0.5)*12;
-            giftIcon.style.filter = 'brightness(1.5) drop-shadow(0 0 16px #fff)';
-            giftIcon.style.boxShadow = '0 0 32px #fff, 0 0 12px #ffeb3b';
-            giftIcon.style.transition = 'transform 0.2s, box-shadow 0.2s, filter 0.2s';
-            giftIcon.style.transform = 'scale(1.3) rotate('+(Math.random()*60-30)+'deg)';
-            setTimeout(()=>{giftIcon.style.transform = 'none';}, 400);
-          };
-          giftIcon.onmouseleave = function() {
-            giftIcon.style.filter = '';
-            giftIcon.style.boxShadow = '';
-          };
-          // 點擊爆炸動畫
+          // 初始位置
+          jumpGift();
           giftIcon.onclick = function() {
-            // 爆炸粒子
-            for(let i=0;i<18;i++) {
-              createParticle(x+iconSize/2, y+iconSize/2, i%2===0?'star':'confetti');
-            }
-            giftIcon.style.transition = 'transform 0.3s, filter 0.3s';
-            giftIcon.style.transform = 'scale(1.7) rotate('+(Math.random()*360)+'deg)';
-            giftIcon.style.filter = 'brightness(2) drop-shadow(0 0 32px #fff)';
+            // 結束頁面淡出
+            endScreen.style.opacity = '0';
             setTimeout(()=>{
-              giftIcon.style.transform = 'none';
-              giftIcon.style.filter = '';
-              // 結束頁面淡出
-              endScreen.style.opacity = '0';
-              setTimeout(()=>{
-                endScreen.style.display = 'none';
-                // 生日動畫區塊淡入
-                document.querySelector('.cs').style.display = '';
-                const canvasEl = document.querySelector('.canvas');
-                const textEl = document.querySelector('.text');
-                canvasEl.style.display = '';
-                textEl.style.display = '';
-                setTimeout(()=>{ canvasEl.style.opacity = 1; }, 30);
-                // 觸發生日動畫初始化
-                if (window.S && typeof S.init === 'function') {
-                  S.init();
-                }
-              }, 800);
-            }, 420);
+              endScreen.style.display = 'none';
+              // 生日動畫區塊淡入
+              document.querySelector('.cs').style.display = '';
+              const canvasEl = document.querySelector('.canvas');
+              const textEl = document.querySelector('.text');
+              canvasEl.style.display = '';
+              textEl.style.display = '';
+              setTimeout(()=>{ canvasEl.style.opacity = 1; }, 30);
+              // 觸發生日動畫初始化
+              if (window.S && typeof S.init === 'function') {
+                S.init();
+              }
+            }, 800);
           };
-          // 視窗縮放時重設邊界
-          window.addEventListener('resize', function(){
-            if (x > window.innerWidth - iconSize) x = window.innerWidth - iconSize;
-            if (y > window.innerHeight - iconSize - 40) y = window.innerHeight - iconSize - 40;
-          });
-          // 啟動動畫
-          if (!giftIcon._rafStarted) {
-            bounceLoop();
-            giftIcon._rafStarted = true;
+          // 自動跳動
+          if (!giftIcon._jumpTimer) {
+            giftIcon._jumpTimer = setInterval(jumpGift, 1200);
           }
         }
         endScreen.style.display = 'flex';
