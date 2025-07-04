@@ -59,7 +59,8 @@
       function getRandomGridPos() {
         // size/grid 可能不是整數，需向下取整
         const cells = Math.floor(size / grid);
-        return getRandomInt(0, cells) * grid;
+        // 保證產生的格線座標在 0 ~ (cells-1)*grid 之間，且不會超出邊界
+        return Math.min(getRandomInt(0, cells), cells - 1) * grid;
       }
       function resizeCanvas() {
         size = getCanvasSize();
@@ -154,6 +155,15 @@
         snake.cells.unshift({x:snake.x, y:snake.y});
         if (snake.cells.length > snake.maxCells) snake.cells.pop();
         ctx.fillStyle = '#ffeb3b';
+        // 若食物超出邊界則重新產生
+        const cells = Math.floor(size / grid);
+        if (
+          apple.x < 0 || apple.y < 0 ||
+          apple.x > (cells-1)*grid || apple.y > (cells-1)*grid
+        ) {
+          apple.x = getRandomGridPos();
+          apple.y = getRandomGridPos();
+        }
         ctx.fillRect(apple.x, apple.y, grid-2, grid-2);
         ctx.fillStyle = '#fff';
         snake.cells.forEach((c, idx) => {
