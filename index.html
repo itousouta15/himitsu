@@ -92,8 +92,8 @@
         ctx.fillText('Use ↑↓←→ or WASD', size/2, size/2+60);
         // 顯示分數
         ctx.font = Math.floor(size/22) + 'px monospace';
-        ctx.fillStyle = '#ffeb3b';
-        ctx.fillText('分數：' + score, size/2, size/2+100);
+        ctx.fillStyle = '#fff';
+        ctx.fillText('score：' + score, size/2, size/2+100);
       }
       window.addEventListener('resize', function(){
         // 若遊戲未開始則重設，若遊戲進行中則不自動 resize 以避免格線錯位
