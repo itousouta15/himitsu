@@ -90,6 +90,10 @@
         ctx.fillText('Press Start', size/2, size/2+30);
         ctx.font = Math.floor(size/28) + 'px monospace';
         ctx.fillText('Use ↑↓←→ or WASD', size/2, size/2+60);
+        // 顯示分數
+        ctx.font = Math.floor(size/22) + 'px monospace';
+        ctx.fillStyle = '#ffeb3b';
+        ctx.fillText('分數：' + score, size/2, size/2+100);
       }
       window.addEventListener('resize', function(){
         // 若遊戲未開始則重設，若遊戲進行中則不自動 resize 以避免格線錯位
@@ -160,6 +164,11 @@
         ctx.fillStyle = '#ad5072';
         ctx.fillRect(0,0,canvas.width,canvas.height);
         drawBorder();
+        // 顯示分數
+        ctx.font = Math.floor(size/22) + 'px monospace';
+        ctx.fillStyle = '#ffeb3b';
+        ctx.textAlign = 'center';
+        ctx.fillText('分數：' + score, size/2, 38);
         snake.x += snake.dx;
         snake.y += snake.dy;
         // check border (fix: grid對齊，不能用4px，應用0和size-grid)
