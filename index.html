@@ -58,12 +58,26 @@
         return Math.floor(Math.random() * (max - min)) + min;
       }
       // 產生一個隨機格線座標，確保不會超出邊界
-      function getRandomGridPos() {
+      function getRandomGridPos(snakeCells) {
         // size/grid 可能不是整數，需向下取整
         const cells = Math.floor(size / grid);
-        // 保證產生的格線座標在 0 ~ (cells-1)*grid 之間，且不會超出邊界
-        // 並且與邊界線對齊
-        return Math.min(getRandomInt(0, cells), cells - 1) * grid + 0.5;
+        let tries = 0;
+        while (true) {
+          const x = Math.min(getRandomInt(0, cells), cells - 1) * grid + 0.5;
+          const y = Math.min(getRandomInt(0, cells), cells - 1) * grid + 0.5;
+          let conflict = false;
+          if (snakeCells) {
+            for (let i = 0; i < snakeCells.length; i++) {
+              if (snakeCells[i].x === x && snakeCells[i].y === y) {
+                conflict = true;
+                break;
+              }
+            }
+          }
+          if (!conflict) return {x, y};
+          tries++;
+          if (tries > 100) return {x, y}; // fallback, should never happen
+        }
       }
       function resizeCanvas() {
         size = getCanvasSize();
@@ -79,7 +93,9 @@
         resizeCanvas();
         const mid = Math.floor(size/2/grid)*grid + 0.5;
         snake = {x:mid, y:mid, dx:grid, dy:0, cells:[], maxCells:4};
-        apple = {x:getRandomGridPos(), y:getRandomGridPos()};
+        // 初始蛇身
+        snake.cells = [{x:mid, y:mid}];
+        apple = getRandomGridPos(snake.cells);
         playing = false;
         started = false;
         score = 0;
@@ -152,7 +168,8 @@
         // 重新依目前畫布大小初始化蛇與蘋果位置
         const mid = Math.floor(size/2/grid)*grid + 0.5;
         snake = {x:mid, y:mid, dx:grid, dy:0, cells:[], maxCells:4};
-        apple = {x:getRandomGridPos(), y:getRandomGridPos()};
+        snake.cells = [{x:mid, y:mid}];
+        apple = getRandomGridPos(snake.cells);
       });
       // 判斷是否為手機裝置
       function isMobile() {
@@ -177,14 +194,20 @@
         snake.cells.unshift({x:snake.x, y:snake.y});
         if (snake.cells.length > snake.maxCells) snake.cells.pop();
         ctx.fillStyle = '#ffeb3b';
-        // 若食物超出邊界則重新產生
+        // 若食物超出邊界或與蛇身重疊則重新產生
         const cells = Math.floor(size / grid);
         if (
           apple.x < 0 || apple.y < 0 ||
           apple.x > (cells-1)*grid || apple.y > (cells-1)*grid
         ) {
-          apple.x = getRandomGridPos();
-          apple.y = getRandomGridPos();
+          apple = getRandomGridPos(snake.cells);
+        }
+        // 若食物與蛇身重疊則重新產生
+        for (let i = 0; i < snake.cells.length; i++) {
+          if (apple.x === snake.cells[i].x && apple.y === snake.cells[i].y) {
+            apple = getRandomGridPos(snake.cells);
+            break;
+          }
         }
         ctx.fillRect(apple.x, apple.y, grid-2, grid-2);
         ctx.fillStyle = '#fff';
@@ -195,9 +218,8 @@
         if (snake.x === apple.x && snake.y === apple.y) {
           snake.maxCells++;
           score++;
-          // 產生新蘋果時確保落在格線上且不超出邊界
-          apple.x = getRandomGridPos();
-          apple.y = getRandomGridPos();
+          // 產生新蘋果時確保不與蛇身重疊
+          apple = getRandomGridPos(snake.cells);
         }
         // 檢查自咬
         for (let i=1; i<snake.cells.length; i++) {
@@ -274,7 +296,9 @@
           giftIcon.style.zIndex = '2000';
           giftIcon.style.pointerEvents = 'auto';
           // 粒子動畫生成
+          let stopParticles = false;
           function spawnParticles(x, y) {
+            if (stopParticles) return;
             const colors = ['#fffbe7','#ffe0f0','#ffd700','#ffb6c1','#b2e5ff','#f7a8b8','#fff'];
             for (let i = 0; i < 8; i++) {
               const star = document.createElement('div');
@@ -328,6 +352,12 @@
           giftIcon.onclick = function() {
             // 結束頁面淡出
             endScreen.style.opacity = '0';
+            // 停止粒子動畫
+            stopParticles = true;
+            if (giftIcon._jumpTimer) {
+              clearInterval(giftIcon._jumpTimer);
+              giftIcon._jumpTimer = null;
+            }
             setTimeout(()=>{
               endScreen.style.display = 'none';
               // 生日動畫區塊淡入
@@ -345,6 +375,7 @@
           };
           // 自動跳動
           if (!giftIcon._jumpTimer) {
+            stopParticles = false;
             giftIcon._jumpTimer = setInterval(jumpGift, 1200);
           }
         }
