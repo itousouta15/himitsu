@@ -34,7 +34,7 @@
         <span id="typewriter"></span><br />
         <span class="life-time-label">妳來到這個世界已經</span> <span id="span_dt_dt"></span>
         <br />
-        <span class="random-words" style="font-size: 1.2em; color: #ffffdd;"></span>
+        <span id="random-words" class="random-words" style="font-size: 1.2em; color: #ffffdd;"></span>
     </p>
     <script>
     // Simple pixel snake game with start button and border
@@ -43,6 +43,7 @@
       const canvas = document.getElementById('snake-canvas');
       const ctx = canvas.getContext('2d');
       const startBtn = document.getElementById('snake-start-btn');
+      let score = 0;
       // 動態計算 grid 與 size 以適應手機
       function getCanvasSize() {
         const vw = Math.min(window.innerWidth, window.innerHeight);
@@ -76,6 +77,7 @@
         apple = {x:getRandomGridPos(), y:getRandomGridPos()};
         playing = false;
         started = false;
+        score = 0;
         startBtn.style.display = '';
         ctx.fillStyle = '#ad5072';
         ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -182,6 +184,7 @@
         // 檢查吃到蘋果（避免 resize 後格線錯位）
         if (snake.x === apple.x && snake.y === apple.y) {
           snake.maxCells++;
+          score++;
           // 產生新蘋果時確保落在格線上且不超出邊界
           apple.x = getRandomGridPos();
           apple.y = getRandomGridPos();
@@ -208,6 +211,7 @@
       // 結束頁面 DOM
       let endScreen = null;
       function showEndScreen() {
+        const minScore = 8; // 需要吃到8分才可按彩蛋
         if (!endScreen) {
           endScreen = document.createElement('div');
           endScreen.id = 'snake-end-screen';
@@ -225,14 +229,30 @@
           endScreen.style.transition = 'opacity 0.8s cubic-bezier(.4,0,.2,1)';
           endScreen.style.opacity = '0';
           endScreen.innerHTML = `
-            <div style=\"color:#fff;font-size:2.2em;font-weight:bold;margin-bottom:32px;text-shadow:0 2px 8px #ad5072,0 0 2px #fff;\">遊戲結束</div>
-            <div style=\"display:flex;gap:24px;flex-direction:column;align-items:center;\">
-              <button id=\"snake-restart-btn\" style=\"padding:14px 38px;font-size:1.3em;border-radius:10px;border:none;background:#fff;color:#ad5072;box-shadow:0 2px 8px #888;cursor:pointer;\">再玩一次</button>
-              <button id=\"snake-easter-btn\" style=\"padding:6px 18px;font-size:0.95em;border-radius:8px;border:none;background:linear-gradient(90deg,#fff 60%,#ffe0f0 100%);color:#ad5072;box-shadow:0 1px 4px #aaa;cursor:pointer;opacity:0.55;filter:blur(0.5px);transition:opacity 0.3s,filter 0.3s;\">神祕彩蛋</button>
+            <div id="snake-end-title" style="color:#fff;font-size:2.2em;font-weight:bold;margin-bottom:32px;text-shadow:0 2px 8px #ad5072,0 0 2px #fff;">遊戲結束</div>
+            <div id="snake-score" style="color:#fff;font-size:1.2em;margin-bottom:18px;"></div>
+            <div style="display:flex;gap:24px;flex-direction:column;align-items:center;">
+              <button id="snake-restart-btn" style="padding:14px 38px;font-size:1.3em;border-radius:10px;border:none;background:#fff;color:#ad5072;box-shadow:0 2px 8px #888;cursor:pointer;">再玩一次</button>
+              <button id="snake-easter-btn" style="padding:6px 18px;font-size:0.95em;border-radius:8px;border:none;background:linear-gradient(90deg,#fff 60%,#ffe0f0 100%);color:#ad5072;box-shadow:0 1px 4px #aaa;cursor:pointer;opacity:0.55;filter:blur(0.5px);transition:opacity 0.3s,filter 0.3s;">神祕彩蛋</button>
             </div>
-            <footer style=\"margin-top:40px;color:#fff;font-size:1em;opacity:0.7;letter-spacing:1px;\">©2025 伊藤蒼太 itou Souta</footer>
+            <footer class="copyright-footer">©2025 伊藤蒼太 itou Souta</footer>
           `;
           document.body.appendChild(endScreen);
+        }
+        // 顯示分數
+        endScreen.querySelector('#snake-score').textContent = `分數：${score}  /  ${minScore}`;
+        // 彩蛋按鈕狀態
+        const easterBtn = endScreen.querySelector('#snake-easter-btn');
+        if (score < minScore) {
+          easterBtn.disabled = true;
+          easterBtn.style.opacity = '0.25';
+          easterBtn.style.filter = 'blur(1px)';
+          easterBtn.title = `吃到 ${minScore} 分才可解鎖`;
+        } else {
+          easterBtn.disabled = false;
+          easterBtn.style.opacity = '0.55';
+          easterBtn.style.filter = 'blur(0.5px)';
+          easterBtn.title = '';
         }
         endScreen.style.display = 'flex';
         setTimeout(()=>{ endScreen.style.opacity = '1'; }, 30);
@@ -250,7 +270,8 @@
             resetGame();
           }, 800);
         };
-        document.getElementById('snake-easter-btn').onclick = function() {
+        easterBtn.onclick = function() {
+          if (score < minScore) return;
           // 結束頁面淡出
           endScreen.style.opacity = '0';
           setTimeout(()=>{
