@@ -10,8 +10,8 @@
 
 <body>
     <!-- Snake Game Overlay -->
-    <div id="snake-game-overlay" style="position:fixed;z-index:999;width:100vw;height:100vh;top:0;left:0;background:#ad5072;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity 0.8s cubic-bezier(.4,0,.2,1);opacity:1;">
-      <canvas id="snake-canvas" width="480" height="480" style="background:#ad5072;box-shadow:0 0 30px #ad5072;"></canvas>
+    <div id="snake-game-overlay" style="position:fixed;z-index:999;width:100vw;height:100dvh;top:0;left:0;background:#ad5072;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity 0.8s cubic-bezier(.4,0,.2,1);opacity:1;">
+      <canvas id="snake-canvas" style="background:#ad5072;box-shadow:0 0 30px #ad5072;width:90vw;max-width:480px;height:90vw;max-height:480px;touch-action:none;"></canvas>
       <div id="snake-controls" style="margin-top:18px;display:flex;flex-direction:column;align-items:center;">
         <button id="snake-start-btn" style="margin-bottom:12px;padding:12px 32px;font-size:1.3em;border-radius:8px;border:none;background:#fff;color:#ad5072;box-shadow:0 2px 8px #888;cursor:pointer;">Start</button>
         <div id="snake-virtual-keys" style="display:none;flex-direction:column;align-items:center;gap:4px;">
@@ -43,15 +43,27 @@
       const canvas = document.getElementById('snake-canvas');
       const ctx = canvas.getContext('2d');
       const startBtn = document.getElementById('snake-start-btn');
-      const grid = 24;
-      const size = 480;
+      // 動態計算 grid 與 size 以適應手機
+      function getCanvasSize() {
+        const vw = Math.min(window.innerWidth, window.innerHeight);
+        return Math.min(480, Math.floor(vw * 0.9));
+      }
+      let size = getCanvasSize();
+      let grid = Math.floor(size / 20); // 20格
       let count = 0;
       let snake, apple, playing, started;
       function getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min)) + min;
       }
+      function resizeCanvas() {
+        size = getCanvasSize();
+        grid = Math.floor(size / 20);
+        canvas.width = size;
+        canvas.height = size;
+      }
       function resetGame() {
-        snake = {x:240, y:240, dx:grid, dy:0, cells:[], maxCells:4};
+        resizeCanvas();
+        snake = {x:Math.floor(size/2/grid)*grid, y:Math.floor(size/2/grid)*grid, dx:grid, dy:0, cells:[], maxCells:4};
         apple = {x:getRandomInt(0, size/grid)*grid, y:getRandomInt(0, size/grid)*grid};
         playing = false;
         started = false;
@@ -60,14 +72,19 @@
         ctx.fillRect(0,0,canvas.width,canvas.height);
         drawBorder();
         ctx.fillStyle = '#fff';
-        ctx.font = 'bold 2em monospace';
+        ctx.font = 'bold ' + Math.floor(size/12) + 'px monospace';
         ctx.textAlign = 'center';
         ctx.fillText('Snake Game', size/2, size/2-20);
-        ctx.font = '1.1em monospace';
+        ctx.font = Math.floor(size/22) + 'px monospace';
         ctx.fillText('Press Start', size/2, size/2+30);
-        ctx.font = '1em monospace';
+        ctx.font = Math.floor(size/28) + 'px monospace';
         ctx.fillText('Use ↑↓←→ or WASD', size/2, size/2+60);
       }
+      window.addEventListener('resize', function(){
+        if (!playing && !started) {
+          resetGame();
+        }
+      });
       function drawBorder() {
         ctx.strokeStyle = '#fff';
         ctx.lineWidth = 4;
