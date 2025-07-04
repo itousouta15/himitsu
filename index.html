@@ -242,7 +242,7 @@
             <div id="snake-score" style="color:#fff;font-size:1.2em;margin-bottom:18px;"></div>
             <div style="display:flex;gap:24px;flex-direction:column;align-items:center;">
               <button id="snake-restart-btn" style="padding:14px 38px;font-size:1.3em;border-radius:10px;border:none;background:#fff;color:#ad5072;box-shadow:0 2px 8px #888;cursor:pointer;">再玩一次</button>
-              <button id="snake-easter-btn" style="padding:6px 18px;font-size:0.95em;border-radius:8px;border:none;background:linear-gradient(90deg,#fff 60%,#ffe0f0 100%);color:#ad5072;box-shadow:0 1px 4px #aaa;cursor:pointer;opacity:0.55;filter:blur(0.5px);transition:opacity 0.3s,filter 0.3s;">神祕彩蛋</button>
+              <button id="snake-easter-btn" style="padding:6px 18px;font-size:0.95em;border-radius:8px;border:none;background:linear-gradient(90deg,#fff 60%,#ffe0f0 100%);color:#ad5072;box-shadow:0 1px 4px #aaa;cursor:pointer;opacity:0.55;filter:blur(0.5px);transition:all 0.3s;">神祕彩蛋</button>
             </div>
             <footer class="copyright-footer">©2025 伊藤蒼太 itou Souta</footer>
           `;
@@ -256,11 +256,19 @@
           easterBtn.disabled = true;
           easterBtn.style.opacity = '0.25';
           easterBtn.style.filter = 'blur(1px)';
+          easterBtn.style.background = 'linear-gradient(90deg,#eee 60%,#ffe0f0 100%)';
+          easterBtn.style.color = '#ad5072';
+          easterBtn.style.boxShadow = '0 1px 4px #aaa';
+          easterBtn.style.fontWeight = 'normal';
           easterBtn.title = `吃到 ${minScore} 分才可解鎖`;
         } else {
           easterBtn.disabled = false;
-          easterBtn.style.opacity = '0.55';
-          easterBtn.style.filter = 'blur(0.5px)';
+          easterBtn.style.opacity = '1';
+          easterBtn.style.filter = 'none';
+          easterBtn.style.background = 'linear-gradient(90deg,#fff 0%,#ffe0f0 100%)';
+          easterBtn.style.color = '#d81b60';
+          easterBtn.style.boxShadow = '0 4px 16px #fff, 0 1px 8px #ad5072';
+          easterBtn.style.fontWeight = 'bold';
           easterBtn.title = '';
         }
         endScreen.style.display = 'flex';
@@ -280,7 +288,17 @@
           }, 800);
         };
         easterBtn.onclick = function() {
-          if (score < minScore) return;
+          if (score < minScore) {
+            easterBtn.textContent = '鎖定中';
+            easterBtn.style.transition = 'none';
+            easterBtn.style.background = '#eee';
+            setTimeout(()=>{
+              easterBtn.textContent = '神祕彩蛋';
+              easterBtn.style.transition = '';
+              easterBtn.style.background = 'linear-gradient(90deg,#eee 60%,#ffe0f0 100%)';
+            }, 900);
+            return;
+          }
           // 結束頁面淡出
           endScreen.style.opacity = '0';
           setTimeout(()=>{
