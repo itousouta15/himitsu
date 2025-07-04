@@ -55,6 +55,12 @@
       function getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min)) + min;
       }
+      // 產生一個隨機格線座標，確保不會超出邊界
+      function getRandomGridPos() {
+        // size/grid 可能不是整數，需向下取整
+        const cells = Math.floor(size / grid);
+        return getRandomInt(0, cells) * grid;
+      }
       function resizeCanvas() {
         size = getCanvasSize();
         grid = Math.floor(size / 20);
@@ -63,8 +69,9 @@
       }
       function resetGame() {
         resizeCanvas();
-        snake = {x:Math.floor(size/2/grid)*grid, y:Math.floor(size/2/grid)*grid, dx:grid, dy:0, cells:[], maxCells:4};
-        apple = {x:getRandomInt(0, size/grid)*grid, y:getRandomInt(0, size/grid)*grid};
+        const mid = Math.floor(size/2/grid)*grid;
+        snake = {x:mid, y:mid, dx:grid, dy:0, cells:[], maxCells:4};
+        apple = {x:getRandomGridPos(), y:getRandomGridPos()};
         playing = false;
         started = false;
         startBtn.style.display = '';
@@ -128,8 +135,9 @@
         document.getElementById('snake-virtual-keys').style.display = 'flex';
         playing = true;
         // 重新依目前畫布大小初始化蛇與蘋果位置
-        snake = {x:Math.floor(size/2/grid)*grid, y:Math.floor(size/2/grid)*grid, dx:grid, dy:0, cells:[], maxCells:4};
-        apple = {x:getRandomInt(0, size/grid)*grid, y:getRandomInt(0, size/grid)*grid};
+        const mid = Math.floor(size/2/grid)*grid;
+        snake = {x:mid, y:mid, dx:grid, dy:0, cells:[], maxCells:4};
+        apple = {x:getRandomGridPos(), y:getRandomGridPos()};
       });
       function loop() {
         requestAnimationFrame(loop);
@@ -154,9 +162,9 @@
         // 檢查吃到蘋果（避免 resize 後格線錯位）
         if (snake.x === apple.x && snake.y === apple.y) {
           snake.maxCells++;
-          // 產生新蘋果時確保落在格線上
-          apple.x = getRandomInt(0, size/grid)*grid;
-          apple.y = getRandomInt(0, size/grid)*grid;
+          // 產生新蘋果時確保落在格線上且不超出邊界
+          apple.x = getRandomGridPos();
+          apple.y = getRandomGridPos();
         }
         // 檢查自咬
         for (let i=1; i<snake.cells.length; i++) {
