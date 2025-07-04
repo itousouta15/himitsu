@@ -140,10 +140,16 @@
         snake = {x:mid, y:mid, dx:grid, dy:0, cells:[], maxCells:4};
         apple = {x:getRandomGridPos(), y:getRandomGridPos()};
       });
+      // 判斷是否為手機裝置
+      function isMobile() {
+        return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth <= 600;
+      }
       function loop() {
         requestAnimationFrame(loop);
         if (!playing) return;
-        if (++count < 20) return; // 控制速度（數字越大越慢）
+        // 手機 20，桌機 10，數字越大越慢
+        const speed = isMobile() ? 20 : 10;
+        if (++count < speed) return;
         count = 0;
         ctx.fillStyle = '#ad5072';
         ctx.fillRect(0,0,canvas.width,canvas.height);
