@@ -81,6 +81,7 @@
         ctx.fillText('Use ↑↓←→ or WASD', size/2, size/2+60);
       }
       window.addEventListener('resize', function(){
+        // 若遊戲未開始則重設，若遊戲進行中則不自動 resize 以避免格線錯位
         if (!playing && !started) {
           resetGame();
         }
@@ -126,7 +127,8 @@
         // 顯示虛擬方向鍵
         document.getElementById('snake-virtual-keys').style.display = 'flex';
         playing = true;
-        snake = {x:240, y:240, dx:grid, dy:0, cells:[], maxCells:4};
+        // 重新依目前畫布大小初始化蛇與蘋果位置
+        snake = {x:Math.floor(size/2/grid)*grid, y:Math.floor(size/2/grid)*grid, dx:grid, dy:0, cells:[], maxCells:4};
         apple = {x:getRandomInt(0, size/grid)*grid, y:getRandomInt(0, size/grid)*grid};
       });
       function loop() {
@@ -148,17 +150,20 @@
         ctx.fillStyle = '#fff';
         snake.cells.forEach((c, idx) => {
           ctx.fillRect(c.x, c.y, grid-2, grid-2);
-          if (c.x === apple.x && c.y === apple.y) {
-            snake.maxCells++;
-            apple.x = getRandomInt(0, size/grid)*grid;
-            apple.y = getRandomInt(0, size/grid)*grid;
-          }
-          for (let i=idx+1; i<snake.cells.length; i++) {
-            if (c.x === snake.cells[i].x && c.y === snake.cells[i].y) {
-              playing = false; showEnd(); return;
-            }
-          }
         });
+        // 檢查吃到蘋果（避免 resize 後格線錯位）
+        if (snake.x === apple.x && snake.y === apple.y) {
+          snake.maxCells++;
+          // 產生新蘋果時確保落在格線上
+          apple.x = getRandomInt(0, size/grid)*grid;
+          apple.y = getRandomInt(0, size/grid)*grid;
+        }
+        // 檢查自咬
+        for (let i=1; i<snake.cells.length; i++) {
+          if (snake.x === snake.cells[i].x && snake.y === snake.cells[i].y) {
+            playing = false; showEnd(); return;
+          }
+        }
       }
       function showEnd() {
         // 先做淡出動畫
