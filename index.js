@@ -1,14 +1,14 @@
-// (已移除飄動的字元愛心動畫)
-// S 物件：主動畫控制
+// (Removed floating heart animation)
+// S: main animation controller
 var S = {
-    // 初始化函式
+    // Init function
     init: function () {
-        S.Drawing.init('.canvas'); // 初始化畫布
-        document.body.classList.add('body--ready'); // 加上背景色
-        // 啟動動畫流程（顯示祝福、倒數、圖形等）
-        // 增加點陣愛心顯示
-        // 直接顯示愛心，不做倒數動畫
-        // 手機版點陣圖顯示「生日」\n「快樂」分行，桌機維持原本
+        S.Drawing.init('.canvas'); // Init canvas
+        document.body.classList.add('body--ready'); // Add background color
+        // Start animation: show wishes, shapes, etc.
+        // Show heart shape
+        // No countdown
+        // Mobile: split Happy Birthday into two lines
         function getTimeStr() {
             var d = new Date();
             var h = d.getHours();
@@ -22,7 +22,7 @@ var S = {
         } else {
             S.UI.simulate(timeStr + "|祝你|生日快樂|#letter ❤|#rectangle 15x15|#circle 12|#time");
         }
-        // 持續渲染動畫
+        // Keep rendering animation
         S.Drawing.loop(function () {
             S.Shape.render();
         });
@@ -167,7 +167,6 @@ var S = {
                     }
                     break;
                     default:
-                    // 修正：如果 current 是 #letter 指令，直接顯示內容（如 ❤）
                     if (action === 'letter') {
                         S.Shape.switchShape(S.ShapeBuilder.letter(value));
                     } else {
@@ -294,7 +293,7 @@ var S = {
         }
     };
     S.ShapeBuilder = (function () {
-        // gap: 點陣間距，手機適中（避免糊成一團）
+        // gap: 點陣間距
         var gap = (window.innerWidth <= 600) ? 9 : 13,
         shapeCanvas = document.createElement('canvas'),
         shapeContext = shapeCanvas.getContext('2d'),

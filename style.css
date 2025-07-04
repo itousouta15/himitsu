@@ -1,4 +1,3 @@
-/* 讓「妳來到這個世界已經」在手機自動換行 */
 @media (max-width: 600px) {
   .life-time-label, #span_dt_dt {
     display: block;
@@ -10,7 +9,7 @@
     margin-top: 2px;
   }
 }
-/* copyright footer 樣式 */
+/* copyright footer */
 .copyright-footer {
     color: #BBE1FA;
     text-align: center;
@@ -64,7 +63,6 @@ a {
 @media (max-width: 600px) {
   .canvas {
     margin-top: -10vw;
-    /* 已加大往上移動幅度，讓點陣動畫區域更靠近上方 */
   }
 }
 

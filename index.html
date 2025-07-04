@@ -3,16 +3,16 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>鴨鴨生日快樂!</title>
+    <title>生日快樂❤!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
-    <!-- 头像 -->
+    <!-- Avatar -->
     <div class="cs"></div>
     <canvas class="canvas" width="1820" height="905"></canvas>
-    <!-- 生日祝福語 -->
+    <!-- Birthday wishes -->
     <p class="text">
         <span id="typewriter"></span><br />
         <span class="life-time-label">妳來到這個世界已經</span> <span id="span_dt_dt"></span>
@@ -20,7 +20,7 @@
         <span id="random-words" style="font-size: 1.2em; color: #ffffdd;"></span>
     </p>
     <script>
-    // 自動打字效果
+    // Typewriter effect
     const message = "寶寶，生日快樂！";
     let typeIdx = 0;
     function typeWriter() {
@@ -32,7 +32,7 @@
     }
     window.addEventListener('DOMContentLoaded', typeWriter);
 
-    // 隨機小語
+    // Random sweet words
     const words = [
         "子紜生日快樂w",
         "今天也要開心喔！",
@@ -49,15 +49,15 @@
     setInterval(showRandomWord, 4000);
     window.addEventListener('DOMContentLoaded', showRandomWord);
     </script>
-    <!--  设定出生日期 -->
+    <!-- Birthday counter -->
     <script type="text/javascript" src="time.js"></script>
-    <!-- canvas动画 -->
+    <!-- Canvas animation -->
     <script type="text/javascript" src="index.js"></script>
     <script>
-    // 點陣動畫訊息輪播
+    // Dot-matrix message carousel
     window.addEventListener('DOMContentLoaded', function() {
         if (window.S && S.UI && typeof S.UI.simulate === 'function') {
-            // 根據螢幕寬度決定生日快樂是否換行
+            // Auto line break for Happy Birthday on mobile
             function getMessages() {
                 const isMobile = window.innerWidth <= 600;
                 return [
@@ -72,7 +72,7 @@
             let messages = getMessages();
             let idx = 0;
             setInterval(function() {
-                // 若螢幕尺寸變化，重新取得 messages
+                // Update messages if screen size changes
                 const newMessages = getMessages();
                 if (messages[1] !== newMessages[1]) {
                     messages = newMessages;
@@ -83,7 +83,7 @@
         }
     });
     </script>
-    <!-- copyright -->
+    <!-- Copyright -->
     <footer class="copyright-footer">
         ©2025 伊藤蒼太 itou Souta
     </footer>
