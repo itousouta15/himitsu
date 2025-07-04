@@ -11,6 +11,7 @@
 <body>
     <!-- Snake Game Overlay -->
     <div id="snake-game-overlay" style="position:fixed;z-index:999;width:100vw;height:100dvh;top:0;left:0;background:#ad5072;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity 0.8s cubic-bezier(.4,0,.2,1);opacity:1;">
+      <div id="snake-score-ui" style="position:absolute;top:18px;left:50%;transform:translateX(-50%);z-index:1001;font-size:1.3em;font-weight:bold;color:#fff;text-shadow:0 2px 8px #ad5072,0 0 2px #fff;letter-spacing:1px;display:none;pointer-events:none;user-select:none;"></div>
       <canvas id="snake-canvas" style="background:#ad5072;box-shadow:0 0 30px #ad5072;width:90vw;max-width:480px;height:90vw;max-height:480px;touch-action:none;"></canvas>
       <div id="snake-controls" style="margin-top:18px;display:flex;flex-direction:column;align-items:center;">
         <button id="snake-start-btn" style="margin-bottom:12px;padding:12px 32px;font-size:1.3em;border-radius:8px;border:none;background:#fff;color:#ad5072;box-shadow:0 2px 8px #888;cursor:pointer;">Start</button>
@@ -70,6 +71,10 @@
         canvas.width = size;
         canvas.height = size;
       }
+      function updateScoreUI() {
+        var scoreDiv = document.getElementById('snake-score-ui');
+        scoreDiv.textContent = 'score：' + score;
+      }
       function resetGame() {
         resizeCanvas();
         const mid = Math.floor(size/2/grid)*grid + 0.5;
@@ -90,10 +95,9 @@
         ctx.fillText('Press Start', size/2, size/2+30);
         ctx.font = Math.floor(size/28) + 'px monospace';
         ctx.fillText('Use ↑↓←→ or WASD', size/2, size/2+60);
-        // 顯示分數
-        ctx.font = Math.floor(size/22) + 'px monospace';
-        ctx.fillStyle = '#fff';
-        ctx.fillText('score：' + score, size/2, size/2+100);
+        // 顯示分數於 UI
+        document.getElementById('snake-score-ui').style.display = 'block';
+        updateScoreUI();
       }
       window.addEventListener('resize', function(){
         // 若遊戲未開始則重設，若遊戲進行中則不自動 resize 以避免格線錯位
@@ -164,11 +168,8 @@
         ctx.fillStyle = '#ad5072';
         ctx.fillRect(0,0,canvas.width,canvas.height);
         drawBorder();
-        // 顯示分數
-        ctx.font = Math.floor(size/22) + 'px monospace';
-        ctx.fillStyle = '#ffeb3b';
-        ctx.textAlign = 'center';
-        ctx.fillText('分數：' + score, size/2, 38);
+        // 分數顯示於 UI
+        updateScoreUI();
         snake.x += snake.dx;
         snake.y += snake.dy;
         // check border (fix: grid對齊，不能用4px，應用0和size-grid)
@@ -208,6 +209,8 @@
       function showEnd() {
         // 先做淡出動畫
         overlay.style.opacity = 0;
+        // 隱藏分數 UI
+        document.getElementById('snake-score-ui').style.display = 'none';
         // 隱藏虛擬方向鍵
         document.getElementById('snake-virtual-keys').style.display = 'none';
         setTimeout(()=>{
