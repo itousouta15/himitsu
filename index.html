@@ -224,7 +224,7 @@
             <div style="color:#fff;font-size:2.2em;font-weight:bold;margin-bottom:32px;text-shadow:0 2px 8px #ad5072,0 0 2px #fff;">遊戲結束</div>
             <div style="display:flex;gap:24px;flex-direction:column;align-items:center;">
               <button id="snake-restart-btn" style="padding:14px 38px;font-size:1.3em;border-radius:10px;border:none;background:#fff;color:#ad5072;box-shadow:0 2px 8px #888;cursor:pointer;">再玩一次</button>
-              <button id="snake-easter-btn" style="padding:14px 38px;font-size:1.3em;border-radius:10px;border:none;background:linear-gradient(90deg,#fff 60%,#ffe0f0 100%);color:#ad5072;box-shadow:0 2px 8px #888;cursor:pointer;">神祕彩蛋</button>
+              <button id="snake-easter-btn" style="padding:6px 18px;font-size:0.95em;border-radius:8px;border:none;background:linear-gradient(90deg,#fff 60%,#ffe0f0 100%);color:#ad5072;box-shadow:0 1px 4px #aaa;cursor:pointer;opacity:0.55;filter:blur(0.5px);transition:opacity 0.3s,filter 0.3s;">神祕彩蛋</button>
             </div>
           `;
           document.body.appendChild(endScreen);
@@ -257,6 +257,10 @@
             canvasEl.style.display = '';
             textEl.style.display = '';
             setTimeout(()=>{ canvasEl.style.opacity = 1; }, 30);
+            // 觸發生日動畫初始化
+            if (window.S && typeof S.init === 'function') {
+              S.init();
+            }
           }, 800);
         };
       }
