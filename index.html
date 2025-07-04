@@ -42,13 +42,16 @@
     (function(){
       const overlay = document.getElementById('snake-game-overlay');
       const canvas = document.getElementById('snake-canvas');
-      const ctx = canvas.getContext('2d');
+      // 使用 willReadFrequently 以減少高頻 getImageData 警告
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
       const startBtn = document.getElementById('snake-start-btn');
       let score = 0;
       // 動態計算 grid 與 size 以適應手機
       function getCanvasSize() {
         const vw = Math.min(window.innerWidth, window.innerHeight);
-        return Math.min(480, Math.floor(vw * 0.9));
+        // 先取最大可用寬高，再向下取整為 20 的倍數，確保格線對齊
+        const raw = Math.min(480, Math.floor(vw * 0.9));
+        return Math.floor(raw / 20) * 20;
       }
       let size = getCanvasSize();
       let grid = Math.floor(size / 20); // 20格
@@ -82,6 +85,7 @@
       function resizeCanvas() {
         size = getCanvasSize();
         grid = Math.floor(size / 20);
+        size = grid * 20; // 強制 size 為 20 的倍數，確保格線與邊界對齊
         canvas.width = size;
         canvas.height = size;
       }
