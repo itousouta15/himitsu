@@ -271,8 +271,15 @@
           // 禮物 icon 彈跳動畫與粒子特效
           giftIcon.innerHTML = '🎁';
           giftIcon.style.position = 'fixed';
-          giftIcon.style.zIndex = '2000';
-          giftIcon.style.pointerEvents = 'auto';
+          giftIcon.style.zIndex = '3000';
+          giftIcon.style.pointerEvents = 'all';
+          giftIcon.style.background = 'rgba(255,255,255,0.01)'; // 增加點擊區域
+          giftIcon.style.width = iconSize + 'px';
+          giftIcon.style.height = iconSize + 'px';
+          giftIcon.style.display = 'flex';
+          giftIcon.style.alignItems = 'center';
+          giftIcon.style.justifyContent = 'center';
+          giftIcon.style.borderRadius = '50%';
           giftIcon.style.transition = 'box-shadow 0.2s, filter 0.2s';
           let iconSize = 48;
           let vx = 4 + Math.random()*2, vy = -7 - Math.random()*3; // 初始速度
@@ -282,8 +289,6 @@
           let bounce = 0.7;
           let rafId = null;
           let particles = [];
-          let landCount = 0;
-          let exploded = false;
           function renderParticles() {
             // 移除舊的
             particles = particles.filter(p => p.life > 0);
@@ -311,22 +316,7 @@
             document.body.appendChild(el);
             particles.push({el, x, y, vx: (Math.random()-0.5)*3, vy: -1.5-Math.random()*2, life: 20});
           }
-          function explodeGift() {
-            if (exploded) return;
-            exploded = true;
-            for(let i=0;i<28;i++) {
-              createParticle(x+iconSize/2, y+iconSize/2, i%2===0?'star':'confetti');
-            }
-            giftIcon.style.transition = 'transform 0.5s, filter 0.5s, opacity 0.5s';
-            giftIcon.style.transform = 'scale(2.2) rotate('+(Math.random()*360)+'deg)';
-            giftIcon.style.filter = 'brightness(2) drop-shadow(0 0 32px #fff)';
-            giftIcon.style.opacity = '0';
-            setTimeout(()=>{
-              giftIcon.style.display = 'none';
-            }, 500);
-          }
           function bounceLoop() {
-            if (exploded) return;
             x += vx;
             y += vy;
             vy += gravity;
@@ -334,19 +324,10 @@
             if (x < 0) { x = 0; vx = -vx * bounce; }
             if (x > window.innerWidth - iconSize) { x = window.innerWidth - iconSize; vx = -vx * bounce; }
             if (y < 0) { y = 0; vy = -vy * bounce; }
-            // 落地偵測
-            if (y > window.innerHeight - iconSize - 40) {
-              y = window.innerHeight - iconSize - 40;
-              if (Math.abs(vy) > 2) {
-                landCount++;
-                for(let i=0;i<2;i++) createParticle(x+iconSize/2, y+iconSize/2, 'star');
-                if (landCount >= 3) {
-                  explodeGift();
-                  return;
-                }
-              }
-              vy = -vy * bounce;
-              vy *= 0.92;
+            if (y > window.innerHeight - iconSize - 40) { y = window.innerHeight - iconSize - 40; vy = -vy * bounce; vy *= 0.92; }
+            // 彈跳時產生粒子
+            if (Math.abs(vy) > 6 && y > window.innerHeight - iconSize - 50) {
+              for(let i=0;i<2;i++) createParticle(x+iconSize/2, y+iconSize/2, 'star');
             }
             giftIcon.style.left = x + 'px';
             giftIcon.style.top = y + 'px';
@@ -369,9 +350,16 @@
           };
           // 點擊爆炸動畫
           giftIcon.onclick = function() {
-            if (exploded) return;
-            explodeGift();
+            // 爆炸粒子
+            for(let i=0;i<18;i++) {
+              createParticle(x+iconSize/2, y+iconSize/2, i%2===0?'star':'confetti');
+            }
+            giftIcon.style.transition = 'transform 0.3s, filter 0.3s';
+            giftIcon.style.transform = 'scale(1.7) rotate('+(Math.random()*360)+'deg)';
+            giftIcon.style.filter = 'brightness(2) drop-shadow(0 0 32px #fff)';
             setTimeout(()=>{
+              giftIcon.style.transform = 'none';
+              giftIcon.style.filter = '';
               // 結束頁面淡出
               endScreen.style.opacity = '0';
               setTimeout(()=>{
@@ -388,7 +376,7 @@
                   S.init();
                 }
               }, 800);
-            }, 600);
+            }, 420);
           };
           // 視窗縮放時重設邊界
           window.addEventListener('resize', function(){
