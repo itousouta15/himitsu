@@ -191,8 +191,21 @@
         snake.y += snake.dy;
         // check border (fix: grid對齊，不能用4px，應用0和size-grid)
         if (snake.x < 0 || snake.x >= size || snake.y < 0 || snake.y >= size) { playing = false; showEnd(); return; }
+        // 先移動蛇身
         snake.cells.unshift({x:snake.x, y:snake.y});
-        if (snake.cells.length > snake.maxCells) snake.cells.pop();
+        // 檢查吃到蘋果（避免 resize 後格線錯位）
+        let ateApple = false;
+        if (snake.x === apple.x && snake.y === apple.y) {
+          score++;
+          snake.maxCells++;
+          apple = getRandomGridPos(snake.cells);
+          updateScoreUI();
+          ateApple = true;
+        }
+        // 只在沒吃到食物時才移除尾巴
+        if (!ateApple) {
+          while (snake.cells.length > snake.maxCells) snake.cells.pop();
+        }
         ctx.fillStyle = '#ffeb3b';
         // 若食物超出邊界或與蛇身重疊則重新產生
         const cells = Math.floor(size / grid);
@@ -214,13 +227,7 @@
         snake.cells.forEach((c, idx) => {
           ctx.fillRect(c.x, c.y, grid-2, grid-2);
         });
-        // 檢查吃到蘋果（避免 resize 後格線錯位）
-        if (snake.x === apple.x && snake.y === apple.y) {
-          snake.maxCells++;
-          score++;
-          // 產生新蘋果時確保不與蛇身重疊
-          apple = getRandomGridPos(snake.cells);
-        }
+        // ...已合併到上方...
         // 檢查自咬
         for (let i=1; i<snake.cells.length; i++) {
           if (snake.x === snake.cells[i].x && snake.y === snake.cells[i].y) {
