@@ -9,17 +9,161 @@
 </head>
 
 <body>
+    <!-- Snake Game Overlay -->
+    <div id="snake-game-overlay" style="position:fixed;z-index:999;width:100vw;height:100vh;top:0;left:0;background:#ad5072;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity 0.8s cubic-bezier(.4,0,.2,1);opacity:1;">
+      <canvas id="snake-canvas" width="480" height="480" style="background:#ad5072;box-shadow:0 0 30px #ad5072;"></canvas>
+      <div id="snake-controls" style="margin-top:18px;display:flex;flex-direction:column;align-items:center;">
+        <button id="snake-start-btn" style="margin-bottom:12px;padding:12px 32px;font-size:1.3em;border-radius:8px;border:none;background:#fff;color:#ad5072;box-shadow:0 2px 8px #888;cursor:pointer;">Start</button>
+        <div id="snake-virtual-keys" style="display:none;flex-direction:column;align-items:center;gap:4px;">
+          <div>
+            <button class="vk" data-dir="up" style="width:48px;height:48px;font-size:2em;border-radius:8px;border:none;background:#fff;color:#ad5072;margin:2px;">↑</button>
+          </div>
+          <div>
+            <button class="vk" data-dir="left" style="width:48px;height:48px;font-size:2em;border-radius:8px;border:none;background:#fff;color:#ad5072;margin:2px;">←</button>
+            <button class="vk" data-dir="down" style="width:48px;height:48px;font-size:2em;border-radius:8px;border:none;background:#fff;color:#ad5072;margin:2px;">↓</button>
+            <button class="vk" data-dir="right" style="width:48px;height:48px;font-size:2em;border-radius:8px;border:none;background:#fff;color:#ad5072;margin:2px;">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- Avatar -->
-    <div class="cs"></div>
-    <canvas class="canvas" width="1820" height="905"></canvas>
+    <div class="cs" style="display:none;"></div>
+    <canvas class="canvas" width="1820" height="905" style="display:none;opacity:0;transition:opacity 1.2s cubic-bezier(.4,0,.2,1);"></canvas>
     <!-- Birthday wishes -->
-    <p class="text">
+    <p class="text" style="display:none;">
         <span id="typewriter"></span><br />
         <span class="life-time-label">妳來到這個世界已經</span> <span id="span_dt_dt"></span>
         <br />
         <span id="random-words" style="font-size: 1.2em; color: #ffffdd;"></span>
     </p>
     <script>
+    // Simple pixel snake game with start button and border
+    (function(){
+      const overlay = document.getElementById('snake-game-overlay');
+      const canvas = document.getElementById('snake-canvas');
+      const ctx = canvas.getContext('2d');
+      const startBtn = document.getElementById('snake-start-btn');
+      const grid = 24;
+      const size = 480;
+      let count = 0;
+      let snake, apple, playing, started;
+      function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+      }
+      function resetGame() {
+        snake = {x:240, y:240, dx:grid, dy:0, cells:[], maxCells:4};
+        apple = {x:getRandomInt(0, size/grid)*grid, y:getRandomInt(0, size/grid)*grid};
+        playing = false;
+        started = false;
+        startBtn.style.display = '';
+        ctx.fillStyle = '#ad5072';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        drawBorder();
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 2em monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('Snake Game', size/2, size/2-20);
+        ctx.font = '1.1em monospace';
+        ctx.fillText('Press Start', size/2, size/2+30);
+        ctx.font = '1em monospace';
+        ctx.fillText('Use ↑↓←→ or WASD', size/2, size/2+60);
+      }
+      function drawBorder() {
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(2,2,size-4,size-4);
+      }
+      document.addEventListener('keydown', function(e) {
+        if (!playing) return;
+        const key = e.key;
+        if ((key === 'ArrowLeft' || key === 'a' || key === 'A') && snake.dx === 0) { snake.dx = -grid; snake.dy = 0; }
+        else if ((key === 'ArrowUp' || key === 'w' || key === 'W') && snake.dy === 0) { snake.dy = -grid; snake.dx = 0; }
+        else if ((key === 'ArrowRight' || key === 'd' || key === 'D') && snake.dx === 0) { snake.dx = grid; snake.dy = 0; }
+        else if ((key === 'ArrowDown' || key === 's' || key === 'S') && snake.dy === 0) { snake.dy = grid; snake.dx = 0; }
+      });
+      // 虛擬按鍵（手機/平板）
+      document.querySelectorAll('.vk').forEach(btn => {
+        btn.addEventListener('touchstart', function(e) {
+          e.preventDefault();
+          if (!playing) return;
+          const dir = btn.getAttribute('data-dir');
+          if (dir === 'left' && snake.dx === 0) { snake.dx = -grid; snake.dy = 0; }
+          else if (dir === 'up' && snake.dy === 0) { snake.dy = -grid; snake.dx = 0; }
+          else if (dir === 'right' && snake.dx === 0) { snake.dx = grid; snake.dy = 0; }
+          else if (dir === 'down' && snake.dy === 0) { snake.dy = grid; snake.dx = 0; }
+        });
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          if (!playing) return;
+          const dir = btn.getAttribute('data-dir');
+          if (dir === 'left' && snake.dx === 0) { snake.dx = -grid; snake.dy = 0; }
+          else if (dir === 'up' && snake.dy === 0) { snake.dy = -grid; snake.dx = 0; }
+          else if (dir === 'right' && snake.dx === 0) { snake.dx = grid; snake.dy = 0; }
+          else if (dir === 'down' && snake.dy === 0) { snake.dy = grid; snake.dx = 0; }
+        });
+      });
+      startBtn.addEventListener('click', function(){
+        if (started) return;
+        started = true;
+        startBtn.style.display = 'none';
+        // 顯示虛擬方向鍵
+        document.getElementById('snake-virtual-keys').style.display = 'flex';
+        playing = true;
+        snake = {x:240, y:240, dx:grid, dy:0, cells:[], maxCells:4};
+        apple = {x:getRandomInt(0, size/grid)*grid, y:getRandomInt(0, size/grid)*grid};
+      });
+      function loop() {
+        requestAnimationFrame(loop);
+        if (!playing) return;
+        if (++count < 20) return; // 控制速度（數字越大越慢）
+        count = 0;
+        ctx.fillStyle = '#ad5072';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        drawBorder();
+        snake.x += snake.dx;
+        snake.y += snake.dy;
+        // check border (fix: grid對齊，不能用4px，應用0和size-grid)
+        if (snake.x < 0 || snake.x >= size || snake.y < 0 || snake.y >= size) { playing = false; showEnd(); return; }
+        snake.cells.unshift({x:snake.x, y:snake.y});
+        if (snake.cells.length > snake.maxCells) snake.cells.pop();
+        ctx.fillStyle = '#ffeb3b';
+        ctx.fillRect(apple.x, apple.y, grid-2, grid-2);
+        ctx.fillStyle = '#fff';
+        snake.cells.forEach((c, idx) => {
+          ctx.fillRect(c.x, c.y, grid-2, grid-2);
+          if (c.x === apple.x && c.y === apple.y) {
+            snake.maxCells++;
+            apple.x = getRandomInt(0, size/grid)*grid;
+            apple.y = getRandomInt(0, size/grid)*grid;
+          }
+          for (let i=idx+1; i<snake.cells.length; i++) {
+            if (c.x === snake.cells[i].x && c.y === snake.cells[i].y) {
+              playing = false; showEnd(); return;
+            }
+          }
+        });
+      }
+      function showEnd() {
+        // 先做淡出動畫
+        overlay.style.opacity = 0;
+        // 隱藏虛擬方向鍵
+        document.getElementById('snake-virtual-keys').style.display = 'none';
+        setTimeout(()=>{
+          overlay.style.display = 'none';
+          document.querySelector('.cs').style.display = '';
+          const canvasEl = document.querySelector('.canvas');
+          const textEl = document.querySelector('.text');
+          canvasEl.style.display = '';
+          textEl.style.display = '';
+          // 生日動畫淡入
+          setTimeout(()=>{
+            canvasEl.style.opacity = 1;
+          }, 30);
+        }, 900);
+      }
+      resetGame();
+      loop();
+    })();
     // Typewriter effect
     const message = "寶寶，生日快樂！";
     let typeIdx = 0;
