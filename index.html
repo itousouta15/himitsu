@@ -34,7 +34,7 @@
         <span id="typewriter"></span><br />
         <span class="life-time-label">妳來到這個世界已經</span> <span id="span_dt_dt"></span>
         <br />
-        <span id="random-words" style="font-size: 1.2em; color: #ffffdd;"></span>
+        <span class="random-words" style="font-size: 1.2em; color: #ffffdd;"></span>
     </p>
     <script>
     // Simple pixel snake game with start button and border
@@ -60,7 +60,8 @@
         // size/grid 可能不是整數，需向下取整
         const cells = Math.floor(size / grid);
         // 保證產生的格線座標在 0 ~ (cells-1)*grid 之間，且不會超出邊界
-        return Math.min(getRandomInt(0, cells), cells - 1) * grid;
+        // 並且與邊界線對齊
+        return Math.min(getRandomInt(0, cells), cells - 1) * grid + 0.5;
       }
       function resizeCanvas() {
         size = getCanvasSize();
@@ -70,7 +71,7 @@
       }
       function resetGame() {
         resizeCanvas();
-        const mid = Math.floor(size/2/grid)*grid;
+        const mid = Math.floor(size/2/grid)*grid + 0.5;
         snake = {x:mid, y:mid, dx:grid, dy:0, cells:[], maxCells:4};
         apple = {x:getRandomGridPos(), y:getRandomGridPos()};
         playing = false;
@@ -96,8 +97,11 @@
       });
       function drawBorder() {
         ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(2,2,size-4,size-4);
+        ctx.lineWidth = 2;
+        // 為避免手機高 DPI 或小數像素導致邊界線條不齊，統一用 0.5px 對齊
+        // 讓格線與食物、蛇身都在同一格線上
+        const offset = 0.5;
+        ctx.strokeRect(offset, offset, size - 1, size - 1);
       }
       document.addEventListener('keydown', function(e) {
         if (!playing) return;
@@ -136,7 +140,7 @@
         document.getElementById('snake-virtual-keys').style.display = 'flex';
         playing = true;
         // 重新依目前畫布大小初始化蛇與蘋果位置
-        const mid = Math.floor(size/2/grid)*grid;
+        const mid = Math.floor(size/2/grid)*grid + 0.5;
         snake = {x:mid, y:mid, dx:grid, dy:0, cells:[], maxCells:4};
         apple = {x:getRandomGridPos(), y:getRandomGridPos()};
       });
@@ -221,11 +225,12 @@
           endScreen.style.transition = 'opacity 0.8s cubic-bezier(.4,0,.2,1)';
           endScreen.style.opacity = '0';
           endScreen.innerHTML = `
-            <div style="color:#fff;font-size:2.2em;font-weight:bold;margin-bottom:32px;text-shadow:0 2px 8px #ad5072,0 0 2px #fff;">遊戲結束</div>
-            <div style="display:flex;gap:24px;flex-direction:column;align-items:center;">
-              <button id="snake-restart-btn" style="padding:14px 38px;font-size:1.3em;border-radius:10px;border:none;background:#fff;color:#ad5072;box-shadow:0 2px 8px #888;cursor:pointer;">再玩一次</button>
-              <button id="snake-easter-btn" style="padding:6px 18px;font-size:0.95em;border-radius:8px;border:none;background:linear-gradient(90deg,#fff 60%,#ffe0f0 100%);color:#ad5072;box-shadow:0 1px 4px #aaa;cursor:pointer;opacity:0.55;filter:blur(0.5px);transition:opacity 0.3s,filter 0.3s;">神祕彩蛋</button>
+            <div style=\"color:#fff;font-size:2.2em;font-weight:bold;margin-bottom:32px;text-shadow:0 2px 8px #ad5072,0 0 2px #fff;\">遊戲結束</div>
+            <div style=\"display:flex;gap:24px;flex-direction:column;align-items:center;\">
+              <button id=\"snake-restart-btn\" style=\"padding:14px 38px;font-size:1.3em;border-radius:10px;border:none;background:#fff;color:#ad5072;box-shadow:0 2px 8px #888;cursor:pointer;\">再玩一次</button>
+              <button id=\"snake-easter-btn\" style=\"padding:6px 18px;font-size:0.95em;border-radius:8px;border:none;background:linear-gradient(90deg,#fff 60%,#ffe0f0 100%);color:#ad5072;box-shadow:0 1px 4px #aaa;cursor:pointer;opacity:0.55;filter:blur(0.5px);transition:opacity 0.3s,filter 0.3s;\">神祕彩蛋</button>
             </div>
+            <footer style=\"margin-top:40px;color:#fff;font-size:1em;opacity:0.7;letter-spacing:1px;\">©2025 伊藤蒼太 itou Souta</footer>
           `;
           document.body.appendChild(endScreen);
         }
