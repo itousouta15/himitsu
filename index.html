@@ -245,7 +245,10 @@
             <div id="snake-score" style="color:#fff;font-size:1.2em;margin-bottom:18px;"></div>
             <div style="display:flex;gap:24px;flex-direction:column;align-items:center;">
               <button id="snake-restart-btn" style="padding:14px 38px;font-size:1.3em;border-radius:10px;border:none;background:#fff;color:#ad5072;box-shadow:0 2px 8px #888;cursor:pointer;">再玩一次</button>
-              <button id="snake-easter-btn" style="padding:6px 18px;font-size:0.95em;border-radius:8px;border:none;background:linear-gradient(90deg,#fff 60%,#ffe0f0 100%);color:#ad5072;box-shadow:0 1px 4px #aaa;cursor:pointer;opacity:0.55;filter:blur(0.5px);transition:all 0.3s;">神祕彩蛋</button>
+              <div id="snake-easter-area" style="display:none;flex-direction:column;align-items:center;gap:8px;margin-top:8px;">
+                <div id="snake-gift-icon" style="font-size:2.2em;cursor:pointer;user-select:none;transition:transform 0.3s;"></div>
+                <div id="snake-easter-label" style="color:#fff;font-size:1em;opacity:0.7;letter-spacing:1px;">尚未解鎖神祕彩蛋</div>
+              </div>
             </div>
             <footer class="copyright-footer">©2025 伊藤蒼太 itou Souta</footer>
           `;
@@ -253,26 +256,48 @@
         }
         // 顯示分數
         endScreen.querySelector('#snake-score').textContent = `分數：${score}  /  ${minScore}`;
-        // 彩蛋按鈕狀態
-        const easterBtn = endScreen.querySelector('#snake-easter-btn');
+        // 彩蛋區塊
+        const easterArea = endScreen.querySelector('#snake-easter-area');
+        const giftIcon = endScreen.querySelector('#snake-gift-icon');
+        const easterLabel = endScreen.querySelector('#snake-easter-label');
         if (score < minScore) {
-          easterBtn.disabled = true;
-          easterBtn.style.opacity = '0.25';
-          easterBtn.style.filter = 'blur(1px)';
-          easterBtn.style.background = 'linear-gradient(90deg,#eee 60%,#ffe0f0 100%)';
-          easterBtn.style.color = '#ad5072';
-          easterBtn.style.boxShadow = '0 1px 4px #aaa';
-          easterBtn.style.fontWeight = 'normal';
-          easterBtn.title = `吃到 ${minScore} 分才可解鎖`;
+          easterArea.style.display = 'flex';
+          giftIcon.style.display = 'none';
+          easterLabel.style.display = 'block';
         } else {
-          easterBtn.disabled = false;
-          easterBtn.style.opacity = '1';
-          easterBtn.style.filter = 'none';
-          easterBtn.style.background = 'linear-gradient(90deg,#fff 0%,#ffe0f0 100%)';
-          easterBtn.style.color = '#d81b60';
-          easterBtn.style.boxShadow = '0 4px 16px #fff, 0 1px 8px #ad5072';
-          easterBtn.style.fontWeight = 'bold';
-          easterBtn.title = '';
+          easterArea.style.display = 'flex';
+          giftIcon.style.display = 'block';
+          easterLabel.style.display = 'none';
+          // 隨機跳動動畫
+          function jumpGift() {
+            const x = (Math.random()-0.5)*40;
+            const y = (Math.random()-0.5)*30;
+            giftIcon.style.transform = `translate(${x}px,${y}px) scale(1.1)`;
+            setTimeout(()=>{giftIcon.style.transform = 'none';}, 300);
+          }
+          giftIcon.innerHTML = '🎁';
+          giftIcon.onclick = function() {
+            // 結束頁面淡出
+            endScreen.style.opacity = '0';
+            setTimeout(()=>{
+              endScreen.style.display = 'none';
+              // 生日動畫區塊淡入
+              document.querySelector('.cs').style.display = '';
+              const canvasEl = document.querySelector('.canvas');
+              const textEl = document.querySelector('.text');
+              canvasEl.style.display = '';
+              textEl.style.display = '';
+              setTimeout(()=>{ canvasEl.style.opacity = 1; }, 30);
+              // 觸發生日動畫初始化
+              if (window.S && typeof S.init === 'function') {
+                S.init();
+              }
+            }, 800);
+          };
+          // 自動跳動
+          if (!giftIcon._jumpTimer) {
+            giftIcon._jumpTimer = setInterval(jumpGift, 1200);
+          }
         }
         endScreen.style.display = 'flex';
         setTimeout(()=>{ endScreen.style.opacity = '1'; }, 30);
@@ -290,35 +315,7 @@
             resetGame();
           }, 800);
         };
-        easterBtn.onclick = function() {
-          if (score < minScore) {
-            easterBtn.textContent = '鎖定中';
-            easterBtn.style.transition = 'none';
-            easterBtn.style.background = '#eee';
-            setTimeout(()=>{
-              easterBtn.textContent = '神祕彩蛋';
-              easterBtn.style.transition = '';
-              easterBtn.style.background = 'linear-gradient(90deg,#eee 60%,#ffe0f0 100%)';
-            }, 900);
-            return;
-          }
-          // 結束頁面淡出
-          endScreen.style.opacity = '0';
-          setTimeout(()=>{
-            endScreen.style.display = 'none';
-            // 生日動畫區塊淡入
-            document.querySelector('.cs').style.display = '';
-            const canvasEl = document.querySelector('.canvas');
-            const textEl = document.querySelector('.text');
-            canvasEl.style.display = '';
-            textEl.style.display = '';
-            setTimeout(()=>{ canvasEl.style.opacity = 1; }, 30);
-            // 觸發生日動畫初始化
-            if (window.S && typeof S.init === 'function') {
-              S.init();
-            }
-          }, 800);
-        };
+        // 不再需要 easterBtn 事件
       }
       resetGame();
       loop();
