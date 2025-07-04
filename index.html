@@ -196,16 +196,69 @@
         document.getElementById('snake-virtual-keys').style.display = 'none';
         setTimeout(()=>{
           overlay.style.display = 'none';
-          document.querySelector('.cs').style.display = '';
-          const canvasEl = document.querySelector('.canvas');
-          const textEl = document.querySelector('.text');
-          canvasEl.style.display = '';
-          textEl.style.display = '';
-          // 生日動畫淡入
-          setTimeout(()=>{
-            canvasEl.style.opacity = 1;
-          }, 30);
+          // 顯示結束頁面
+          showEndScreen();
         }, 900);
+      }
+
+      // 結束頁面 DOM
+      let endScreen = null;
+      function showEndScreen() {
+        if (!endScreen) {
+          endScreen = document.createElement('div');
+          endScreen.id = 'snake-end-screen';
+          endScreen.style.position = 'fixed';
+          endScreen.style.zIndex = '1000';
+          endScreen.style.top = '0';
+          endScreen.style.left = '0';
+          endScreen.style.width = '100vw';
+          endScreen.style.height = '100dvh';
+          endScreen.style.background = '#ad5072';
+          endScreen.style.display = 'flex';
+          endScreen.style.flexDirection = 'column';
+          endScreen.style.alignItems = 'center';
+          endScreen.style.justifyContent = 'center';
+          endScreen.style.transition = 'opacity 0.8s cubic-bezier(.4,0,.2,1)';
+          endScreen.style.opacity = '0';
+          endScreen.innerHTML = `
+            <div style="color:#fff;font-size:2.2em;font-weight:bold;margin-bottom:32px;text-shadow:0 2px 8px #ad5072,0 0 2px #fff;">遊戲結束</div>
+            <div style="display:flex;gap:24px;flex-direction:column;align-items:center;">
+              <button id="snake-restart-btn" style="padding:14px 38px;font-size:1.3em;border-radius:10px;border:none;background:#fff;color:#ad5072;box-shadow:0 2px 8px #888;cursor:pointer;">再玩一次</button>
+              <button id="snake-easter-btn" style="padding:14px 38px;font-size:1.3em;border-radius:10px;border:none;background:linear-gradient(90deg,#fff 60%,#ffe0f0 100%);color:#ad5072;box-shadow:0 2px 8px #888;cursor:pointer;">神祕彩蛋</button>
+            </div>
+          `;
+          document.body.appendChild(endScreen);
+        }
+        endScreen.style.display = 'flex';
+        setTimeout(()=>{ endScreen.style.opacity = '1'; }, 30);
+
+        // 綁定按鈕事件
+        document.getElementById('snake-restart-btn').onclick = function() {
+          // 結束頁面淡出
+          endScreen.style.opacity = '0';
+          setTimeout(()=>{
+            endScreen.style.display = 'none';
+            // 遊戲區塊淡入
+            overlay.style.display = 'flex';
+            setTimeout(()=>{ overlay.style.opacity = '1'; }, 30);
+            // 重設遊戲
+            resetGame();
+          }, 800);
+        };
+        document.getElementById('snake-easter-btn').onclick = function() {
+          // 結束頁面淡出
+          endScreen.style.opacity = '0';
+          setTimeout(()=>{
+            endScreen.style.display = 'none';
+            // 生日動畫區塊淡入
+            document.querySelector('.cs').style.display = '';
+            const canvasEl = document.querySelector('.canvas');
+            const textEl = document.querySelector('.text');
+            canvasEl.style.display = '';
+            textEl.style.display = '';
+            setTimeout(()=>{ canvasEl.style.opacity = 1; }, 30);
+          }, 800);
+        };
       }
       resetGame();
       loop();
