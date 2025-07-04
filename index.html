@@ -161,8 +161,8 @@
       function loop() {
         requestAnimationFrame(loop);
         if (!playing) return;
-        // 手機 20，桌機 10，數字越大越慢
-        const speed = isMobile() ? 20 : 15;
+        // 手機 20，桌機 18，數字越大越慢
+        const speed = isMobile() ? 20 : 18;
         if (++count < speed) return;
         count = 0;
         ctx.fillStyle = '#ad5072';
