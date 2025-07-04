@@ -18,9 +18,9 @@ var S = {
         }
         var timeStr = getTimeStr();
         if (window.innerWidth <= 600) {
-            S.UI.simulate(timeStr + "|祝你|#letter 生日\\n快樂|#letter ❤|#rectangle 15x15|#circle 12|#time");
+            S.UI.simulate(timeStr + "|祝妳|#letter 生日\\n快樂|#letter ❤|#rectangle 15x15|#circle 12|#time");
         } else {
-            S.UI.simulate(timeStr + "|祝你|生日快樂|#letter ❤|#rectangle 15x15|#circle 12|#time");
+            S.UI.simulate(timeStr + "|祝妳|生日快樂|#letter ❤|#rectangle 15x15|#circle 12|#time");
         }
         // Keep rendering animation
         S.Drawing.loop(function () {
