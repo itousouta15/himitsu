@@ -306,6 +306,19 @@
           giftIcon.style.position = 'fixed';
           giftIcon.style.zIndex = '2000';
           giftIcon.style.pointerEvents = 'auto';
+          // 額外提示
+          if (!document.getElementById('snake-gift-tip')) {
+            const tip = document.createElement('div');
+            tip.id = 'snake-gift-tip';
+            tip.textContent = '請點擊禮物標示來解鎖更多';
+            tip.style.color = '#fff';
+            tip.style.fontSize = '1em';
+            tip.style.opacity = '0.85';
+            tip.style.marginTop = '8px';
+            tip.style.letterSpacing = '1px';
+            tip.style.textAlign = 'center';
+            giftIcon.parentNode.appendChild(tip);
+          }
           // 粒子動畫生成
           let stopParticles = false;
           function spawnParticles(x, y) {
